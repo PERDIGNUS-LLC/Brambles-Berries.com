@@ -127,8 +127,8 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .hero-raspberry.right {
-    right: -80px;
-    top: 50%;
+    right: -120px;
+    top: 70%;
     transform: translateY(-50%) rotate(15deg);
 }
 
