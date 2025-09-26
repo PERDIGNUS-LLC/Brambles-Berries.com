@@ -91,7 +91,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     background-image: url('https://perdignus-llc.github.io/Brambles-Berries.com/images/hero-background.jpg');
     background-size: cover;
     background-position: center;
-    padding: 3rem 1.5rem;
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
