@@ -104,7 +104,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     max-width: 700px;
     margin: 0 20px;
     background-color: rgba(255, 255, 255, 0.85);
-    padding: 2.5rem;
+    padding: 1rem;
     border-radius: 8px;
     text-align: center;
     z-index: 1;
@@ -121,13 +121,13 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .hero-raspberry.left {
-    left: -100px;
+    left: -80px;
     top: 50%;
     transform: translateY(-50%) rotate(-15deg);
 }
 
 .hero-raspberry.right {
-    right: -100px;
+    right: -80px;
     top: 50%;
     transform: translateY(-50%) rotate(15deg);
 }
