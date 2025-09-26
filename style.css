@@ -229,11 +229,20 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 /* Media query for smaller screens */
 @media (max-width: 900px) {
-    .hero-raspberry {
-        display: none;
-    }
     .hero {
-        padding: 5rem 1.5rem;
+        /* FIX: Remove the tall minimum height and reduce padding */
+        min-height: auto;
+        padding: 4rem 1.5rem;
         justify-content: center;
+    }
+
+    .hero-content h1 {
+        /* FIX: Make the main title smaller on mobile */
+        font-size: 2.2rem;
+    }
+
+    .hero-raspberry {
+        /* This rule hides the raspberries on mobile */
+        display: none;
     }
 }
