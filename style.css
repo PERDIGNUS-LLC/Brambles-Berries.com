@@ -3,10 +3,10 @@
 
 /* --- CSS Variables (Color Palette) --- */
 :root {
-    --bg-color: #FAF9F6; /* Soft off-white */
+    --bg-color: #FFFFFF; /* Set to pure white */
     --text-color: #333333;
-    --primary-red: #B93751; /* Muted raspberry red */
-    --primary-green: #5C6D47; /* Sage green */
+    --primary-red: #B93751;
+    --primary-green: #5C6D47;
     --heading-font: 'Playfair Display', serif;
     --body-font: 'Lato', sans-serif;
 }
@@ -60,7 +60,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .logo-image {
-    height: 150px;
+    height: 120px; /* Increased logo size */
     width: auto;
 }
 
@@ -87,8 +87,6 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 /* --- Hero Section --- */
-/* --- Hero Section --- */
-/* --- Hero Section --- */
 .hero {
     background-image: url('images/hero-background.jpg');
     background-size: cover;
@@ -102,23 +100,20 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 .hero-content {
     max-width: 700px;
-    background-color: rgba(255, 255, 255, 0.85); /* Changed from site bg color to pure white */
+    background-color: rgba(255, 255, 255, 0.85);
     padding: 2em;
     border-radius: 8px;
     text-align: center;
 }
 
 .hero h1 {
-    color: var(--primary-green); /* This uses your sage green color */
+    color: var(--primary-green);
 }
 
 .hero p {
     color: var(--text-color);
     font-size: 1.2rem;
     font-weight: 700;
-}
-.hero p {
-    font-size: 1.2rem;
 }
 
 /* --- Reusable Button --- */
@@ -151,7 +146,9 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .cta {
-    background-color: #ffffff;
+    background-color: #fdfdfd; /* A very light grey to separate it */
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 
 /* --- Featured Products Section --- */
@@ -208,6 +205,8 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     color: var(--bg-color);
     text-decoration: underline;
 }
+
 .footer-vine {
     margin-bottom: 20px;
+    padding: 0 20px;
 }
