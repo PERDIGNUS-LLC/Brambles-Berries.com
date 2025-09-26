@@ -88,20 +88,24 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 /* --- Hero Section --- */
 /* --- Hero Section --- */
+/* --- Hero Section --- */
 .hero {
     background-image: url('images/hero-background.jpg');
     background-size: cover;
     background-position: center;
-    text-align: center;
-    padding: 100px 20px;
+    padding: 40px 20px;
+    min-height: 60vh; /* Ensures the section is tall */
+    display: flex; /* These three lines center the content */
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-content {
     max-width: 700px;
-    margin: 0 auto;
-    background-color: rgba(250, 249, 246, 0.8); /* Semi-transparent version of the light background */
+    background-color: rgba(255, 255, 255, 0.85); /* Changed from site bg color to pure white */
     padding: 2em;
     border-radius: 8px;
+    text-align: center;
 }
 
 .hero h1 {
