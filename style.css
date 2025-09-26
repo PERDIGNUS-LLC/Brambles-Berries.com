@@ -121,14 +121,14 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .hero-raspberry.left {
-    left: -80px;
+    left: -75px;
     top: 50%;
     transform: translateY(-50%) rotate(-15deg);
 }
 
 .hero-raspberry.right {
-    right: -120px;
-    top: 70%;
+    right: -75px;
+    top: 50%;
     transform: translateY(-50%) rotate(15deg);
 }
 
