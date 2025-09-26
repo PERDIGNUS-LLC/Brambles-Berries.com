@@ -3,7 +3,7 @@
 
 /* --- CSS Variables (Color Palette) --- */
 :root {
-    --bg-color: #FFFFFF; /* Set to pure white */
+    --bg-color: #FFFFFF;
     --text-color: #333333;
     --primary-red: #B93751;
     --primary-green: #5C6D47;
@@ -60,7 +60,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .logo-image {
-    height: 120px; /* Increased logo size */
+    height: 120px;
     width: auto;
 }
 
@@ -88,33 +88,48 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 /* --- Hero Section --- */
 .hero {
-    /* THIS IS THE KEY FIX: Using the full, absolute URL to your image */
     background-image: url('https://perdignus-llc.github.io/Brambles-Berries.com/images/hero-background.jpg');
     background-size: cover;
     background-position: center;
-    padding: 40px 20px;
-    min-height: 60vh; /* Ensures the section is tall */
-    display: flex; /* These three lines center the content */
+    padding: 3rem 1.5rem;
+    display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    min-height: 70vh;
+    overflow: hidden;
 }
 
 .hero-content {
     max-width: 700px;
+    margin: 0 20px;
     background-color: rgba(255, 255, 255, 0.85);
-    padding: 2em;
+    padding: 2.5rem;
     border-radius: 8px;
     text-align: center;
+    z-index: 1;
+    flex-shrink: 0;
 }
 
-.hero h1 {
-    color: var(--primary-green);
+.hero-raspberry {
+    position: absolute;
+    height: 350px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.7;
+    z-index: 0;
 }
 
-.hero p {
-    color: var(--text-color);
-    font-size: 1.2rem;
-    font-weight: 700;
+.hero-raspberry.left {
+    left: -100px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-15deg);
+}
+
+.hero-raspberry.right {
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%) rotate(15deg);
 }
 
 /* --- Reusable Button --- */
@@ -147,7 +162,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 .cta {
-    background-color: #fdfdfd; /* A very light grey to separate it */
+    background-color: #fdfdfd;
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
 }
@@ -210,4 +225,15 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 .footer-vine {
     margin-bottom: 20px;
     padding: 0 20px;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 900px) {
+    .hero-raspberry {
+        display: none;
+    }
+    .hero {
+        padding: 5rem 1.5rem;
+        justify-content: center;
+    }
 }
