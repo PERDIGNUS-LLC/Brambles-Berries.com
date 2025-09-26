@@ -87,11 +87,11 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 /* --- Hero Section --- */
+/* --- Hero Section --- */
 .hero {
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/hero-background.jpg');
+    background-image: url('images/hero-background.jpg');
     background-size: cover;
     background-position: center;
-    color: white;
     text-align: center;
     padding: 100px 20px;
 }
@@ -99,11 +99,19 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 .hero-content {
     max-width: 700px;
     margin: 0 auto;
+    background-color: rgba(250, 249, 246, 0.8); /* Semi-transparent version of the light background */
+    padding: 2em;
+    border-radius: 8px;
 }
 
 .hero h1 {
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color: var(--primary-green); /* This uses your sage green color */
+}
+
+.hero p {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 .hero p {
     font-size: 1.2rem;
