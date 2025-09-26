@@ -167,26 +167,6 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     border-bottom: 1px solid #eee;
 }
 
-.intro-raspberry {
-    position: absolute;
-    height: 750px;
-    width: auto;
-    object-fit: contain;
-    opacity: 0.7;
-    z-index: 0;
-}
-
-.intro-raspberry.left {
-    left: -75px;
-    top: 50%;
-    transform: translateY(-50%) rotate(-15deg);
-}
-
-.intro-raspberry.right {
-    right: -75px;
-    top: 50%;
-    transform: translateY(-50%) rotate(15deg);
-}
 /* --- Featured Products Section --- */
 .featured-products {
     padding: 60px 0;
