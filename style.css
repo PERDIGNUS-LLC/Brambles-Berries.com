@@ -227,13 +227,25 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     padding: 0 20px;
 }
 
-/* Media query for smaller screens */
+/* --- Media Query for Mobile Responsiveness --- */
 @media (max-width: 900px) {
+    .main-header .container {
+        /* FIX: Allow header items to stack on small screens */
+        flex-direction: column;
+        gap: 15px;
+    }
+
     .hero {
-        /* FIX: Remove the tall minimum height and reduce padding */
+        /* FIX: Remove tall min-height and adjust padding for mobile */
         min-height: auto;
-        padding: 4rem 1.5rem;
-        justify-content: center;
+        padding: 4rem 1rem; /* Reduced horizontal padding slightly */
+    }
+
+    .hero-content {
+        /* THIS IS THE KEY FIX: Allow the content box to shrink */
+        flex-shrink: 1; /* Default is 1, allowing it to shrink */
+        margin: 0;      /* Remove side margins; parent's padding handles spacing */
+        padding: 1.5rem;
     }
 
     .hero-content h1 {
@@ -242,7 +254,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     }
 
     .hero-raspberry {
-        /* This rule hides the raspberries on mobile */
+        /* FIX: Hide the decorative raspberries that overflow on mobile */
         display: none;
     }
 }
