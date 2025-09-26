@@ -167,13 +167,13 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     border-bottom: 1px solid #eee;
 }
 
-.hero-raspberry.left {
+.intro-raspberry.left {
     left: -75px;
     top: 50%;
     transform: translateY(-50%) rotate(-15deg);
 }
 
-.hero-raspberry.right {
+.intro-raspberry.right {
     right: -75px;
     top: 50%;
     transform: translateY(-50%) rotate(15deg);
