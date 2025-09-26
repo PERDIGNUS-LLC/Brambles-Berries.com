@@ -1,1 +1,201 @@
+/* --- Google Fonts Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
+/* --- CSS Variables (Color Palette) --- */
+:root {
+    --bg-color: #FAF9F6; /* Soft off-white */
+    --text-color: #333333;
+    --primary-red: #B93751; /* Muted raspberry red */
+    --primary-green: #5C6D47; /* Sage green */
+    --heading-font: 'Playfair Display', serif;
+    --body-font: 'Lato', sans-serif;
+}
+
+/* --- General Styles & Reset --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--body-font);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- Typography --- */
+h1, h2, h3 {
+    font-family: var(--heading-font);
+    color: var(--primary-green);
+    margin-top: 0;
+}
+
+h1 { font-size: 3rem; margin-bottom: 0.5em; }
+h2 { font-size: 2.2rem; text-align: center; margin-bottom: 1em; }
+h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
+
+/* --- Header & Navigation --- */
+.main-header {
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 10px 0;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-image {
+    height: 60px;
+    width: auto;
+}
+
+.main-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--primary-green);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    border-color: var(--primary-red);
+}
+
+/* --- Hero Section --- */
+.hero {
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.hero p {
+    font-size: 1.2rem;
+}
+
+/* --- Reusable Button --- */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-red);
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    background-color: #a02d45;
+    transform: translateY(-2px);
+}
+
+/* --- Intro & CTA Sections --- */
+.intro, .cta {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.intro p, .cta p {
+    max-width: 650px;
+    margin: 0 auto 1em;
+}
+
+.cta {
+    background-color: #ffffff;
+}
+
+/* --- Featured Products Section --- */
+.featured-products {
+    padding: 60px 0;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-card h3 {
+    padding: 20px 20px 25px;
+    margin: 0;
+}
+
+/* --- Footer --- */
+.main-footer {
+    background-color: var(--primary-green);
+    color: var(--bg-color);
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 40px;
+}
+
+.main-footer p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.main-footer a {
+    color: var(--bg-color);
+    text-decoration: underline;
+}
+.footer-vine {
+    margin-bottom: 20px;
+}
