@@ -1,111 +1,212 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brambles and Berries - Whimsical Stepping Stools for Children</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-</head>
-<body>
+/* --- Google Fonts Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
-    <header class="main-header">
-        <div class="container">
-            <a href="index.html" class="logo-link">
-                <img src="images/logo.png" alt="Brambles and Berries Logo" class="logo-image">
-            </a>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+/* --- CSS Variables (Color Palette) --- */
+:root {
+    --bg-color: #FFFFFF; /* Set to pure white */
+    --text-color: #333333;
+    --primary-red: #B93751;
+    --primary-green: #5C6D47;
+    --heading-font: 'Playfair Display', serif;
+    --body-font: 'Lato', sans-serif;
+}
 
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Whimsical, Handcrafted Stools for Little Ones</h1>
-                <p>Bringing joy and a helpful boost to every child's day.</p>
-                <a href="#" class="btn">Explore The Collection</a>
-            </div>
-        </section>
+/* --- General Styles & Reset --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
-        <section class="intro">
-            <div class="container">
-                <h2>Artistry in Every Step</h2>
-                <p>Born from a passion for art, a love of woodcraft, and a devotion to children, each Brambles and Berries stool is handcrafted and hand-painted with care, turning a simple tool into a piece of whimsical art.</p>
-            </div>
-        </section>
+body {
+    margin: 0;
+    font-family: var(--body-font);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
 
-        <section class="featured-products">
-            <div class="container">
-                <h2>Our Favorites</h2>
-                <div class="product-grid">
-                    <div class="product-card">
-                        <img src="images/product-avo.jpg" alt="Avocado shaped stepping stool">
-                        <h3>Avocado Stool</h3>
-                    </div>
-                    <div class="product-card">
-                        <img src="images/product-peach.jpg" alt="Peach shaped stepping stool">
-                        <h3>Peachy Keen Stool</h3>
-                    </div>
-                    <div class="product-card">
-                        <img src="images/product-cloud.jpg" alt="Cloud shaped stepping stool">
-                        <h3>Dreamy Cloud Stool</h3>
-                    </div>
-                    <div class="product-card">
-                        <img src="images/product-raspberry.jpg" alt="Raspberry shaped stepping stool">
-                        <h3>Raspberry Stool</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
+img {
+    max-width: 100%;
+    display: block;
+}
 
-        <section class="cta">
-            <div class="container">
-                <h2>Ready to find the perfect stool?</h2>
-                <p>We have over 25 unique, handcrafted designs waiting to be discovered.</p>
-                <a href="#" class="btn">Shop All Designs</a>
-            </div>
-        </section>
-    </main>
-        </main>
-    <footer class="main-footer">
-        <div class="footer-vine">
-            <svg width="100%" height="40" viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <path id="leaf" d="M0 0 Q 5 -5 10 0 Q 5 5 0 0 Z" fill="#5C6D47"/>
-                </defs>
-                <path d="M0 20 Q 150 0, 300 20 T 600 20 T 900 20 T 1200 20"
-                      stroke="#5C6D47" fill="transparent"
-                      stroke-width="2.5" stroke-linecap="round"/>
-                <circle cx="80" cy="28" r="4" fill="#4B4453"/>
-                <circle cx="95" cy="30" r="3" fill="#4B4453"/>
-                <use href="#leaf" x="150" y="10" transform="rotate(20 150 10)"/>
-                <circle cx="250" cy="8" r="4" fill="#4B4453"/>
-                <circle cx="265" cy="6" r="3" fill="#4B4453"/>
-                <use href="#leaf" x="350" y="25" transform="rotate(-15 350 25)"/>
-                <circle cx="480" cy="28" r="4" fill="#4B4453"/>
-                <use href="#leaf" x="550" y="15" transform="rotate(10 550 15)"/>
-                <circle cx="650" cy="8" r="4" fill="#4B4453"/>
-                <circle cx="635" cy="6" r="3" fill="#4B4453"/>
-                <circle cx="800" cy="28" r="4" fill="#4B4453"/>
-                <circle cx="815" cy="30" r="3" fill="#4B4453"/>
-                <use href="#leaf" x="950" y="10" transform="rotate(20 950 10)"/>
-                <circle cx="1050" cy="8" r="4" fill="#4B4453"/>
-                <use href="#leaf" x="1120" y="25" transform="rotate(-10 1120 25)"/>
-            </svg>
-        </div>
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-        <p>&copy; 2025 Brambles and Berries. All Rights Reserved.</p>
-        <p>Contact us at <a href="mailto:Bramblesandberries37@gmail.com">Bramblesandberries37@gmail.com</a></p>
-    </footer>
+/* --- Typography --- */
+h1, h2, h3 {
+    font-family: var(--heading-font);
+    color: var(--primary-green);
+    margin-top: 0;
+}
 
-</body>
-</html>
+h1 { font-size: 3rem; margin-bottom: 0.5em; }
+h2 { font-size: 2.2rem; text-align: center; margin-bottom: 1em; }
+h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
+
+/* --- Header & Navigation --- */
+.main-header {
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 10px 0;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-image {
+    height: 120px; /* Increased logo size */
+    width: auto;
+}
+
+.main-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--primary-green);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    border-color: var(--primary-red);
+}
+
+/* --- Hero Section --- */
+.hero {
+    background-image: url('images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 40px 20px;
+    min-height: 60vh; /* Ensures the section is tall */
+    display: flex; /* These three lines center the content */
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content {
+    max-width: 700px;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 2em;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.hero h1 {
+    color: var(--primary-green);
+}
+
+.hero p {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* --- Reusable Button --- */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-red);
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    background-color: #a02d45;
+    transform: translateY(-2px);
+}
+
+/* --- Intro & CTA Sections --- */
+.intro, .cta {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.intro p, .cta p {
+    max-width: 650px;
+    margin: 0 auto 1em;
+}
+
+.cta {
+    background-color: #fdfdfd; /* A very light grey to separate it */
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- Featured Products Section --- */
+.featured-products {
+    padding: 60px 0;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-card h3 {
+    padding: 20px 20px 25px;
+    margin: 0;
+}
+
+/* --- Footer --- */
+.main-footer {
+    background-color: var(--primary-green);
+    color: var(--bg-color);
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 40px;
+}
+
+.main-footer p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.main-footer a {
+    color: var(--bg-color);
+    text-decoration: underline;
+}
+
+.footer-vine {
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
