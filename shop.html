@@ -255,39 +255,27 @@
         </div>
     </footer>
 
-    <script src="https://js.stripe.com/v3/"></script>
-    <script type="text/javascript">
-        // IMPORTANT: Replace with your actual Stripe Publishable Key
-        const stripe = Stripe('pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt');
+   <script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+    // Your Stripe Publishable Key
+    const stripe = Stripe('pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt');
 
-        // Find all buttons with the 'checkout-button' class
-        const checkoutButtons = document.querySelectorAll('.checkout-button');
-        
-        // Add a click event to each button
-        checkoutButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Get the product details from the button's data attributes
-                const productName = this.dataset.productName;
-                const unitAmount = this.dataset.unitAmount;
+    const checkoutButtons = document.querySelectorAll('.checkout-button');
+    
+    checkoutButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            // Get the Price ID from the button
+            const priceId = this.dataset.priceId;
 
-                stripe.redirectToCheckout({
-                    lineItems: [{
-                        // Instead of a Price ID, we now use price_data
-                        price_data: {
-                            currency: 'usd',
-                            unit_amount: unitAmount, // The price in cents from the button
-                            product_data: {
-                                name: productName, // The name from the button
-                            },
-                        },
-                        quantity: 1
-                    }],
-                    mode: 'payment',
-                    successUrl: window.location.origin + '/success.html', // You should create a success.html page
-                    cancelUrl: window.location.href,
-                });
+            stripe.redirectToCheckout({
+                lineItems: [{
+                    price: priceId, // Use the Price ID here
+                    quantity: 1
+                }],
+                mode: 'payment',
+                successUrl: window.location.origin + '/success.html',
+                cancelUrl: window.location.href,
             });
         });
-    </script>
-    </body>
-</html>
+    });
+</script>
