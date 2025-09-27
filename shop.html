@@ -258,26 +258,26 @@
    <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
     // Your Stripe Publishable Key
-    const stripe = Stripe('pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt');
+   const stripe = Stripe('pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt');
 
-    const checkoutButtons = document.querySelectorAll('.checkout-button');
-    
-    checkoutButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            // Get the Price ID from the button
-            const priceId = this.dataset.priceId;
+const checkoutButtons = document.querySelectorAll('.checkout-button');
+checkoutButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        const priceId = this.dataset.priceId;
+        console.log('Price ID:', priceId);  // Debugging to ensure Price ID is correct
 
-            stripe.redirectToCheckout({
-                lineItems: [{
-                    price: priceId, // Use the Price ID here
-                    quantity: 1
-                }],
-                mode: 'payment',
-                successUrl: window.location.origin + '/success.html',
-                cancelUrl: window.location.href,
-            });
+        stripe.redirectToCheckout({
+            lineItems: [{
+                price: priceId,
+                quantity: 1
+            }],
+            mode: 'payment',
+            successUrl: window.location.origin + '/success.html',
+            cancelUrl: window.location.href,
+        }).then(function (result) {
+            if (result.error) {
+                alert(result.error.message);  // Log any errors
+            }
         });
     });
-</script>
-</body>
-</html>
+});
