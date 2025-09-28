@@ -20,17 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
     base: [
       { file: "watermelon.png", label: "Watermelon" },
       { file: "lemon.png", label: "Lemon" },
-      { file: "tangerine.png", label: "Tangerine" }
+      { file: "tangerine.png", label: "Tangerine" },
+      { file: "flower.png", label: "Flower" }
     ],
     eyes: [
       { file: null, label: "None" },
       { file: "eyes1.png", label: "Eyes 1" },
-      { file: "eyes2.png", label: "Eyes 2" }
+      { file: "eyes2.png", label: "Eyes 2" },
+      { file: "eyes3.png", label: "Eyes 3" },
+      { file: "eyes4.png", label: "Eyes 4" }
     ],
     mouth: [
       { file: null, label: "None" },
       { file: "mouth1.png", label: "Mouth 1" },
-      { file: "mouth2.png", label: "Mouth 2" }
+      { file: "mouth2.png", label: "Mouth 2" },
+      { file: "mouth3.png", label: "Mouth 3" },
+      { file: "mouth4.png", label: "Mouth 4" }
     ]
   };
 
