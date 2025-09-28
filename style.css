@@ -330,7 +330,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
   /* Define the width of the two columns */
   #customizer .preview {
-    flex: 0 0 35%; /* Sets the image column to 55% width */
+    flex: 0 0 40%; /* Sets the image column to 55% width */
     position: sticky; /* Makes the image stay in view while scrolling options */
     top: 20px;
   }
