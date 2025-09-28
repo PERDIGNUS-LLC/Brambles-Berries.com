@@ -7,32 +7,50 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="customizer">
-    <div class="preview">
-      <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
-      <img id="eyes-image" src="" alt="Eyes" style="display:none">
-      <img id="mouth-image" src="" alt="Mouth" style="display:none">
+  <header class="main-header">
+    <div class="container">
+      <img class="logo-image" src="images/logo.png" alt="Brambles & Berries Logo">
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="customizer.html" class="active">Customizer</a></li>
+        </ul>
+      </nav>
     </div>
+  </header>
 
-    <div class="selectors">
-      <div class="customizer-section">
-        <h3>Base</h3>
-        <div id="base-selector" class="selector-grid"></div>
+  <main>
+    <div id="customizer">
+      <div class="preview">
+        <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
+        <img id="eyes-image" src="" alt="Eyes" style="display:none">
+        <img id="mouth-image" src="" alt="Mouth" style="display:none">
       </div>
 
-      <div class="customizer-section">
-        <h3>Eyes</h3>
-        <div id="eyes-selector" class="selector-grid"></div>
+      <div class="selectors">
+        <div class="customizer-section">
+          <h3>Base</h3>
+          <div id="base-selector" class="selector-grid"></div>
+        </div>
+
+        <div class="customizer-section">
+          <h3>Eyes</h3>
+          <div id="eyes-selector" class="selector-grid"></div>
+        </div>
+
+        <div class="customizer-section">
+          <h3>Mouth</h3>
+          <div id="mouth-selector" class="selector-grid"></div>
+        </div>
       </div>
 
-      <div class="customizer-section">
-        <h3>Mouth</h3>
-        <div id="mouth-selector" class="selector-grid"></div>
-      </div>
+      <button id="add-to-cart">Add to Cart</button>
     </div>
+  </main>
 
-    <button id="add-to-cart">Add to Cart</button>
-  </div>
+  <footer class="main-footer">
+    <p>&copy; 2025 Brambles & Berries</p>
+  </footer>
 
   <script src="customizer.js"></script>
 </body>
