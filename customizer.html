@@ -1,1 +1,92 @@
-ICUP
+document.addEventListener("DOMContentLoaded", () => {
+  const baseImage = document.getElementById("base-image");
+  const eyesImage = document.getElementById("eyes-image");
+  const mouthImage = document.getElementById("mouth-image");
+
+  const selectors = {
+    base: document.getElementById("base-selector"),
+    eyes: document.getElementById("eyes-selector"),
+    mouth: document.getElementById("mouth-selector")
+  };
+
+  // Config object to track selections
+  const config = {
+    base: "apple.png",
+    eyes: null,
+    mouth: null
+  };
+
+  // Options data
+  const options = {
+    base: [
+      { file: "apple.png", label: "Apple" },
+      { file: "pumpkin.png", label: "Pumpkin" },
+      { file: "carrot.png", label: "Carrot" }
+      // TODO: Add all 28 bases here
+    ],
+    eyes: [
+      { file: null, label: "None" },
+      { file: "style1.png", label: "Eyes 1" },
+      { file: "style2.png", label: "Eyes 2" }
+    ],
+    mouth: [
+      { file: null, label: "None" },
+      { file: "smile.png", label: "Smile" },
+      { file: "surprised.png", label: "Surprised" }
+    ]
+  };
+
+  // Populate selectors dynamically
+  function populateSelector(type, targetElement, folder) {
+    options[type].forEach(opt => {
+      const img = document.createElement("img");
+      img.src = opt.file
+        ? `images/customizer/${type}/${opt.file}`
+        : "images/customizer/none.png"; // fallback icon
+      img.alt = opt.label;
+      img.title = opt.label;
+
+      img.addEventListener("click", () => {
+        // Clear previous selection
+        [...targetElement.children].forEach(c => c.classList.remove("selected"));
+        img.classList.add("selected");
+
+        // Update preview + config
+        config[type] = opt.file;
+
+        if (type === "base") {
+          baseImage.src = `images/customizer/${type}/${opt.file}`;
+        } else if (type === "eyes") {
+          if (opt.file) {
+            eyesImage.src = `images/customizer/${type}/${opt.file}`;
+            eyesImage.style.display = "block";
+          } else {
+            eyesImage.style.display = "none";
+          }
+        } else if (type === "mouth") {
+          if (opt.file) {
+            mouthImage.src = `images/customizer/${type}/${opt.file}`;
+            mouthImage.style.display = "block";
+          } else {
+            mouthImage.style.display = "none";
+          }
+        }
+      });
+
+      targetElement.appendChild(img);
+    });
+  }
+
+  populateSelector("base", selectors.base, "bases");
+  populateSelector("eyes", selectors.eyes, "eyes");
+  populateSelector("mouth", selectors.mouth, "mouth");
+
+  // Add to cart
+  document.getElementById("add-to-cart").addEventListener("click", () => {
+    console.log("Added to cart:", config);
+    alert(`Added to cart: Base = ${config.base}, Eyes = ${config.eyes || "None"}, Mouth = ${config.mouth || "None"}`);
+
+    // TODO: send config to backend or checkout system
+    // Example: pass config as metadata to Stripe checkout session
+  });
+});
