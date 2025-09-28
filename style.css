@@ -282,7 +282,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 /* Customizer preview only */
 #customizer .preview {
   position: relative;
-  width: 300px; /* base width */
+  width: 500px; /* base width */
   margin: 0 auto 20px;
 }
 
