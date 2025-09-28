@@ -310,8 +310,8 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 #customizer #mouth-image {
   position: absolute;
   z-index: 3;
-  width: 20%;            /* scale mouth proportionally */
-  top: 50%;              /* roughly where mouth sits vertically */
+  width: 15%;            /* scale mouth proportionally */
+  top: 35%;              /* roughly where mouth sits vertically */
   left: 50%;             /* center horizontally */
   transform: translate(-50%, 0); /* center horizontally */
   height: auto;
