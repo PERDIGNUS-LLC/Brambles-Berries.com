@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "watermelon.png", label: "Watermelon" },
       { file: "lemon.png", label: "Lemon" },
       { file: "tangerine.png", label: "Tangerine" }
-      // Add remaining bases here
     ],
     eyes: [
       { file: null, label: "None" },
@@ -70,10 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function populateSelector(type, targetElement) {
+    const folder = type === "base" ? "bases" : type;
+
     options[type].forEach(opt => {
       const img = document.createElement("img");
       img.src = opt.file
-        ? `images/customizer/${type}/${opt.file}`
+        ? `images/customizer/${folder}/${opt.file}`
         : "images/customizer/none.png";
       img.alt = opt.label;
       img.title = opt.label;
@@ -85,17 +86,17 @@ document.addEventListener("DOMContentLoaded", () => {
         config[type] = opt.file;
 
         if (type === "base") {
-          baseImage.src = `images/customizer/${type}/${opt.file}`;
+          baseImage.src = `images/customizer/${folder}/${opt.file}`;
         } else if (type === "eyes") {
           if (opt.file) {
-            eyesImage.src = `images/customizer/${type}/${opt.file}`;
+            eyesImage.src = `images/customizer/${folder}/${opt.file}`;
             eyesImage.style.display = "block";
           } else {
             eyesImage.style.display = "none";
           }
         } else if (type === "mouth") {
           if (opt.file) {
-            mouthImage.src = `images/customizer/${type}/${opt.file}`;
+            mouthImage.src = `images/customizer/${folder}/${opt.file}`;
             mouthImage.style.display = "block";
           } else {
             mouthImage.style.display = "none";
@@ -132,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cart = saveToLocalCart(item);
     console.log("Cart now:", cart);
     alert(`Added to cart: ${sku} — ${humanTitle}`);
+    document.getElementById("mini-cart").innerText = `Cart items: ${cart.length}`;
   });
 
   window._bb_customizer = { config, buildIdentifiers, saveToLocalCart };
