@@ -279,44 +279,42 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     text-align: center;
 }
 
+/* Customizer preview only */
 #customizer .preview {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 0 auto 20px;
+  position: relative;
+  width: 300px; /* base width */
+  margin: 0 auto 20px;
 }
 
-#customizer .preview img {
-    position: absolute; /* overlays sit on top of base */
-    top: 0;
-    left: 0;
-    pointer-events: none; /* don't interfere with clicks */
-}
-
-/* Base stays full container size */
+/* Base image */
 #customizer #base-image {
-    width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 1;
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
 }
 
 /* Eyes overlay */
 #customizer #eyes-image {
-    z-index: 2;
-    width: 50%;      /* scale eyes relative to base */
-    top: 18%;        /* adjust vertical position */
-    left: 25%;       /* adjust horizontal position */
-    height: auto;
+  position: absolute;
+  z-index: 2;
+  width: 30%;            /* make eyes smaller relative to base */
+  top: 25%;              /* roughly where eyes sit vertically */
+  left: 50%;             /* start from horizontal center */
+  transform: translate(-50%, 0); /* center horizontally */
+  height: auto;
 }
 
 /* Mouth overlay */
 #customizer #mouth-image {
-    z-index: 3;
-    width: 40%;      /* scale mouth relative to base */
-    top: 55%;        /* vertical position */
-    left: 30%;       /* horizontal position */
-    height: auto;
+  position: absolute;
+  z-index: 3;
+  width: 35%;            /* scale mouth proportionally */
+  top: 65%;              /* roughly where mouth sits vertically */
+  left: 50%;             /* center horizontally */
+  transform: translate(-50%, 0); /* center horizontally */
+  height: auto;
 }
 
 
