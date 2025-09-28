@@ -300,7 +300,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
   position: absolute;
   z-index: 2;
   width: 30%;            /* make eyes smaller relative to base */
-  top: 30%;              /* roughly where eyes sit vertically */
+  top: 35%;              /* roughly where eyes sit vertically */
   left: 50%;             /* start from horizontal center */
   transform: translate(-50%, 0); /* center horizontally */
   height: auto;
@@ -311,7 +311,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
   position: absolute;
   z-index: 3;
   width: 15%;            /* scale mouth proportionally */
-  top: 35%;              /* roughly where mouth sits vertically */
+  top: 40%;              /* roughly where mouth sits vertically */
   left: 50%;             /* center horizontally */
   transform: translate(-50%, 0); /* center horizontally */
   height: auto;
@@ -330,7 +330,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
   /* Define the width of the two columns */
   #customizer .preview {
-    flex: 0 0 55%; /* Sets the image column to 55% width */
+    flex: 0 0 75%; /* Sets the image column to 55% width */
     position: sticky; /* Makes the image stay in view while scrolling options */
     top: 20px;
   }
