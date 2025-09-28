@@ -317,6 +317,34 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
   height: auto;
 }
 
+/* --- Customizer Desktop Layout --- */
+@media (min-width: 901px) {
+  #customizer {
+    /* Make the container wider and enable flexbox */
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Aligns columns to the top */
+    gap: 40px; /* Creates space between the columns */
+  }
+
+  /* Define the width of the two columns */
+  #customizer .preview {
+    flex: 0 0 55%; /* Sets the image column to 55% width */
+    position: sticky; /* Makes the image stay in view while scrolling options */
+    top: 20px;
+  }
+
+  #customizer .selectors {
+    flex: 1; /* Allows the options column to take the remaining space */
+    text-align: left; /* Aligns the text to the left in this column */
+  }
+
+  /* Center the option thumbnails within the new left-aligned column */
+  .selector-grid {
+    justify-content: flex-start;
+  }
+}
 
 #customizer .selectors {
     margin-top: 20px;
