@@ -23,8 +23,8 @@
     <div id="customizer">
       <div class="preview">
         <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
-        <img id="eyes-image" src="eyes1.png" alt="Eyes" style="display:none">
-        <img id="mouth-image" src="mouth1.png" alt="Mouth" style="display:none">
+        <img id="eyes-image" src="images/customizer/eyes/eyes1.png" alt="Eyes" style="display:none">
+        <img id="mouth-image" src="images/customizer/mouth/mouth1.png" alt="Mouth" style="display:none">
       </div>
 
       <div class="selectors">
@@ -54,10 +54,9 @@
 
   <script src="customizer.js"></script>
   <div id="mini-cart"></div>
-<script>
-const cart = JSON.parse(localStorage.getItem("bb_custom_cart_v1") || "[]");
-document.getElementById("mini-cart").innerText = `Cart items: ${cart.length}`;
-</script>
-
+  <script>
+    const cart = JSON.parse(localStorage.getItem("bb_custom_cart_v1") || "[]");
+    document.getElementById("mini-cart").innerText = `Cart items: ${cart.length}`;
+  </script>
 </body>
 </html>
