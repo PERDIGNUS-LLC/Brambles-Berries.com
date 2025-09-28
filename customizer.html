@@ -53,5 +53,11 @@
   </footer>
 
   <script src="customizer.js"></script>
+  <div id="mini-cart"></div>
+<script>
+const cart = JSON.parse(localStorage.getItem("bb_custom_cart_v1") || "[]");
+document.getElementById("mini-cart").innerText = `Cart items: ${cart.length}`;
+</script>
+
 </body>
 </html>
