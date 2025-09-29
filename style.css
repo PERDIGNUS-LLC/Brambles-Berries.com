@@ -357,30 +357,41 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     transform: translateY(-2px);
 }
 
-/* --- CORRECTED TWO-COLUMN DESKTOP LAYOUT --- */
+/* --- FIXED TWO-COLUMN DESKTOP LAYOUT --- */
 @media (min-width: 901px) {
     #customizer {
         max-width: 1200px;
         display: flex;
         align-items: flex-start;
-        gap: 25px; /* REDUCED: Was 40px, this fixes the huge margin */
+        gap: 25px;
     }
 
     /* LEFT Column: Preview Image + Button */
     #customizer .preview {
         flex: 1 1 60%;
-        max-height: 80vh;
         display: flex;
         flex-direction: column;
-        position: sticky;
-        top: 20px;
+        align-items: center;
     }
 
-    /* This ensures the base image inside scales down and centers */
+    /* Contain the base image without overflow */
     #customizer .preview #base-image {
-        width: 100%; /* ADDED: Forces image to fit column width, fixing the cactus overflow */
+        max-width: 100%;
+        max-height: 70vh; /* keeps it inside viewport height */
         object-fit: contain;
-        max-height: calc(100% - 70px);
+    }
+
+    /* Eyes & mouth stay properly positioned on top */
+    #customizer #eyes-image, 
+    #customizer #mouth-image {
+        max-width: 30%; /* will shrink with base image */
+        height: auto;
+    }
+
+    /* Add-to-Cart button stays under the image */
+    #add-to-cart {
+        margin-top: 20px;
+        align-self: center;
     }
 
     /* RIGHT Column: Selectors */
@@ -388,9 +399,11 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
         flex: 1 1 40%;
         max-width: 400px;
         text-align: left;
+        overflow-y: auto; /* ensures scrolling if too tall */
+        max-height: 80vh;
     }
 
-    /* Align thumbnails to the left in their column */
+    /* Align thumbnails to the left */
     .selector-grid {
         justify-content: flex-start;
     }
