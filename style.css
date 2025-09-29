@@ -305,11 +305,11 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 #customizer #eyes-image {
     width: 20%;
-    top: 35%;
+    top: 30%;
 }
 
 #customizer #mouth-image {
-    width: 15%;
+    width: 10%;
     top: 40%;
     z-index: 3;
 }
