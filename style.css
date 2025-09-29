@@ -272,16 +272,18 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     margin-bottom: 25px;
 }
 
-/* --- FINAL CUSTOMIZER STYLES (SINGLE COLUMN) --- */
+/* --- Customizer Styles --- */
+
+/* Default stacked layout for mobile */
 #customizer {
-    max-width: 600px; /* A single, centered column */
+    max-width: 700px;
     margin: 40px auto;
     text-align: center;
 }
 
 #customizer .preview {
     position: relative;
-    width: 100%;
+    max-width: 500px; /* Give a max-width for mobile */
     margin: 0 auto 20px;
 }
 
@@ -293,28 +295,23 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     z-index: 1;
 }
 
-#customizer #eyes-image {
+#customizer #eyes-image, #customizer #mouth-image {
     position: absolute;
-    z-index: 2;
-    width: 30%;
-    top: 35%;
     left: 50%;
     transform: translate(-50%, 0);
     height: auto;
+    z-index: 2;
+}
+
+#customizer #eyes-image {
+    width: 30%;
+    top: 35%;
 }
 
 #customizer #mouth-image {
-    position: absolute;
-    z-index: 3;
     width: 15%;
     top: 40%;
-    left: 50%;
-    transform: translate(-50%, 0);
-    height: auto;
-}
-
-#customizer .selectors {
-    margin-top: 20px;
+    z-index: 3;
 }
 
 .customizer-section {
@@ -323,7 +320,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 .selector-grid {
     display: flex;
-    justify-content: center; /* Center the thumbnails */
+    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
@@ -343,19 +340,49 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 }
 
 #add-to-cart {
-    display: inline-block; /* Reverted for natural button flow */
+    display: inline-block;
     margin-top: 25px;
     padding: 4px 16px;
     font-size: 1.1rem;
     background-color: #FF00FF; /* Fuchsia color */
     color: white;
     border: none;
-    border-radius: 50px; /* Makes it pill-shaped */
+    border-radius: 50px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 #add-to-cart:hover {
-    background-color: #d100d1; /* A slightly darker fuchsia for hover */
+    background-color: #d100d1;
     transform: translateY(-2px);
+}
+
+/* --- CORRECTED TWO-COLUMN DESKTOP LAYOUT --- */
+@media (min-width: 901px) {
+    #customizer {
+        max-width: 1000px;
+        display: flex;
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    /* LEFT Column: Preview Image + Button */
+    #customizer .preview {
+        flex: 1;
+        max-width: 600px;
+        position: sticky; /* Optional: keeps preview in view on scroll */
+        top: 20px;
+        margin-bottom: 0; /* Remove bottom margin from mobile view */
+    }
+
+    /* RIGHT Column: Selectors */
+    #customizer .selectors {
+        flex: 0 0 320px; /* Give a fixed width so it doesn't get squished */
+        text-align: left;
+    }
+
+    /* Align thumbnails to the left in their column */
+    .selector-grid {
+        justify-content: flex-start;
+    }
 }
