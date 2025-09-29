@@ -272,26 +272,19 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     margin-bottom: 25px;
 }
 
-/* --- NEW SIMPLIFIED CUSTOMIZER STYLES --- */
+/* --- FINAL CUSTOMIZER STYLES (SINGLE COLUMN) --- */
 #customizer {
     max-width: 600px; /* A single, centered column */
     margin: 40px auto;
     text-align: center;
 }
 
-/* The container for the preview image */
 #customizer .preview {
     position: relative;
-    width: 100%; /* Preview fills the container width */
-    margin: 0 auto;
+    width: 100%;
+    margin: 0 auto 20px;
 }
 
-/* Hide the options column completely */
-#customizer .selectors {
-    display: none;
-}
-
-/* Base image */
 #customizer #base-image {
     width: 100%;
     height: auto;
@@ -300,7 +293,6 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     z-index: 1;
 }
 
-/* Eyes overlay */
 #customizer #eyes-image {
     position: absolute;
     z-index: 2;
@@ -311,7 +303,6 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     height: auto;
 }
 
-/* Mouth overlay */
 #customizer #mouth-image {
     position: absolute;
     z-index: 3;
@@ -322,10 +313,38 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     height: auto;
 }
 
-/* Add to Cart Button, styled to be under the preview */
+#customizer .selectors {
+    margin-top: 20px;
+}
+
+.customizer-section {
+    margin-bottom: 20px;
+}
+
+.selector-grid {
+    display: flex;
+    justify-content: center; /* Center the thumbnails */
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.selector-grid img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.selector-grid img.selected {
+    border-color: var(--primary-red);
+}
+
 #add-to-cart {
-    display: block; /* Allows margin auto to work for centering */
-    margin: 25px auto 0; /* Top margin, centered horizontally, no bottom margin */
+    display: inline-block; /* Reverted for natural button flow */
+    margin-top: 25px;
     padding: 4px 16px;
     font-size: 1.1rem;
     background-color: #FF00FF; /* Fuchsia color */
