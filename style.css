@@ -360,16 +360,16 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 /* --- CORRECTED TWO-COLUMN DESKTOP LAYOUT --- */
 @media (min-width: 901px) {
     #customizer {
-        max-width: 1200px; /* Allow more overall width */
+        max-width: 1200px;
         display: flex;
         align-items: flex-start;
-        gap: 40px;
+        gap: 25px; /* REDUCED: Was 40px, this fixes the huge margin */
     }
 
     /* LEFT Column: Preview Image + Button */
     #customizer .preview {
-        flex: 1 1 60%; /* Allow column to be flexible, aiming for 60% width */
-        max-height: 80vh; /* CRITICAL: Max height is 80% of the screen's height */
+        flex: 1 1 60%;
+        max-height: 80vh;
         display: flex;
         flex-direction: column;
         position: sticky;
@@ -378,14 +378,15 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
     /* This ensures the base image inside scales down and centers */
     #customizer .preview #base-image {
-        object-fit: contain; /* Scales image down to fit, maintaining aspect ratio */
-        max-height: calc(100% - 70px); /* Leaves space for the button below */
+        width: 100%; /* ADDED: Forces image to fit column width, fixing the cactus overflow */
+        object-fit: contain;
+        max-height: calc(100% - 70px);
     }
 
     /* RIGHT Column: Selectors */
     #customizer .selectors {
-        flex: 1 1 40%; /* Allow column to be flexible, aiming for 40% width */
-        max-width: 400px; /* Prevent it from getting too wide */
+        flex: 1 1 40%;
+        max-width: 400px;
         text-align: left;
     }
 
