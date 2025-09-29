@@ -272,122 +272,71 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     margin-bottom: 25px;
 }
 
-/* --- Customizer Styles --- */
+/* --- NEW SIMPLIFIED CUSTOMIZER STYLES --- */
 #customizer {
-    max-width: 700px;
+    max-width: 600px; /* A single, centered column */
     margin: 40px auto;
     text-align: center;
 }
 
-/* Customizer preview only */
+/* The container for the preview image */
 #customizer .preview {
-  position: relative;
-  width: 300px; /* base width */
-  margin: 0 auto 20px;
+    position: relative;
+    width: 100%; /* Preview fills the container width */
+    margin: 0 auto;
+}
+
+/* Hide the options column completely */
+#customizer .selectors {
+    display: none;
 }
 
 /* Base image */
 #customizer #base-image {
-  width: 100%;
-  height: auto;
-  display: block;
-  position: relative;
-  z-index: 1;
+    width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 1;
 }
 
 /* Eyes overlay */
 #customizer #eyes-image {
-  position: absolute;
-  z-index: 2;
-  width: 30%;            /* make eyes smaller relative to base */
-  top: 35%;              /* roughly where eyes sit vertically */
-  left: 50%;             /* start from horizontal center */
-  transform: translate(-50%, 0); /* center horizontally */
-  height: auto;
+    position: absolute;
+    z-index: 2;
+    width: 30%;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: auto;
 }
 
 /* Mouth overlay */
 #customizer #mouth-image {
-  position: absolute;
-  z-index: 3;
-  width: 15%;            /* scale mouth proportionally */
-  top: 40%;              /* roughly where mouth sits vertically */
-  left: 50%;             /* center horizontally */
-  transform: translate(-50%, 0); /* center horizontally */
-  height: auto;
+    position: absolute;
+    z-index: 3;
+    width: 15%;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: auto;
 }
 
-/* --- Customizer Desktop Layout --- */
-@media (min-width: 901px) {
-  #customizer {
-    max-width: 1000px;
-    display: flex;
-    align-items: flex-start;
-    gap: 40px;
-  }
-
-  /* Image Preview Column (Left) */
-  #customizer .preview {
-    flex: 1; /* Let the image column grow to fill available space */
-    max-width: 600px; /* But cap its width to prevent it from being too giant */
-    position: sticky;
-    top: 20px;
-  }
-
-  /* Options Column (Right) */
-  #customizer .selectors {
-    flex: 0 0 320px; /* Give this column a fixed width so its content never wraps badly */
-    text-align: left;
-  }
-
-  /* Make sure the thumbnails align to the left */
-  .selector-grid {
-    justify-content: flex-start;
-  }
-}
-
-#customizer .selectors {
-    margin-top: 20px;
-}
-
-.customizer-section {
-    margin-bottom: 20px;
-}
-
-.selector-grid {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.selector-grid img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.selector-grid img.selected {
-    border-color: var(--primary-red);
-}
-
+/* Add to Cart Button, styled to be under the preview */
 #add-to-cart {
-    margin-top: 15px; /* Increased margin to give it space */
-    padding: 4px 16px; /* Reduced padding from 8px 20px */
-    font-size: 1rem;   /* Reduced font size from 1.1rem */
-    background-color: #FF00FF; /* Fuchsia color */
-    color: white;
-    border: none;
-    border-radius: 35px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    display: block; /* Allows margin auto to work for centering */
+    margin: 25px auto 0; /* Top margin, centered horizontally, no bottom margin */
+    padding: 4px 16px;
+    font-size: 1.1rem;
+    background-color: #FF00FF; /* Fuchsia color */
+    color: white;
+    border: none;
+    border-radius: 50px; /* Makes it pill-shaped */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #add-to-cart:hover {
-    background-color: #a02d45;
+    background-color: #d100d1; /* A slightly darker fuchsia for hover */
     transform: translateY(-2px);
 }
