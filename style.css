@@ -344,7 +344,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     margin-top: 25px;
     padding: 4px 16px;
     font-size: 1.1rem;
-    background-color: #FF00FF; /* Fuchsia color */
+    background-color: #af7de0ff; /* Fuchsia color */
     color: white;
     border: none;
     border-radius: 50px;
@@ -360,7 +360,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 /* --- CORRECTED TWO-COLUMN DESKTOP LAYOUT --- */
 @media (min-width: 901px) {
     #customizer {
-        max-width: 1000px;
+        max-width: 1200px; /* Allow more overall width */
         display: flex;
         align-items: flex-start;
         gap: 40px;
@@ -368,16 +368,24 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
     /* LEFT Column: Preview Image + Button */
     #customizer .preview {
-        flex: 1;
-        max-width: 600px;
-        position: sticky; /* Optional: keeps preview in view on scroll */
+        flex: 1 1 60%; /* Allow column to be flexible, aiming for 60% width */
+        max-height: 80vh; /* CRITICAL: Max height is 80% of the screen's height */
+        display: flex;
+        flex-direction: column;
+        position: sticky;
         top: 20px;
-        margin-bottom: 0; /* Remove bottom margin from mobile view */
+    }
+
+    /* This ensures the base image inside scales down and centers */
+    #customizer .preview #base-image {
+        object-fit: contain; /* Scales image down to fit, maintaining aspect ratio */
+        max-height: calc(100% - 70px); /* Leaves space for the button below */
     }
 
     /* RIGHT Column: Selectors */
     #customizer .selectors {
-        flex: 0 0 320px; /* Give a fixed width so it doesn't get squished */
+        flex: 1 1 40%; /* Allow column to be flexible, aiming for 40% width */
+        max-width: 400px; /* Prevent it from getting too wide */
         text-align: left;
     }
 
