@@ -379,10 +379,10 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     margin-top: 25px; /* Increased margin to give it space */
     padding: 6px 18px; /* Reduced padding from 8px 20px */
     font-size: 1rem;   /* Reduced font size from 1.1rem */
-    background-color: var(--primary-red);
+    background-color: #FF00FF; /* Fuchsia color */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
 }
