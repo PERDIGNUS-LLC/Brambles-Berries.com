@@ -377,7 +377,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 
 #add-to-cart {
     margin-top: 15px;
-    padding: 12px 30px;
+    padding: 8px 20px;
     font-size: 1.1rem;
     background-color: var(--primary-red);
     color: white;
