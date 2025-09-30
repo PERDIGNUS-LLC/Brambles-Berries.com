@@ -129,8 +129,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
 .hero-raspberry.right {
     right: -60px;
     top: 50%;
-    transform: translateY(-50%) rotate(15deg);
-    transform: scaleX(-1);
+    transform: translateY(-50%) rotate(15deg) scaleX(-1);
 }
 
 /* --- Reusable Button --- */
