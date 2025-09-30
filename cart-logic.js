@@ -1,51 +1,65 @@
-// This function will be called by any page when it needs to get shipping rates.
-// It sends the user's address and cart details to our secure Netlify function.
-async function fetchShippingRates(customerAddress, cart) {
-  try {
-    // This is the special URL that triggers your secure serverless function.
-    const response = await fetch('/.netlify/functions/get-shipping-rates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ customerAddress, cart })
-    });
+// File: cart-logic.js
 
-    if (!response.ok) {
-      throw new Error('The server could not fetch shipping rates.');
-    }
-
-    const rates = await response.json();
-    console.log('Available shipping rates:', rates);
-    //
-    // TODO: Add your code here to display the rates to the user on the page.
-    // For example, update the innerHTML of a div with the rate options.
-    //
-    
-  } catch (error) {
-    console.error('Error fetching shipping rates:', error);
-  }
-}
-
-// Add event listeners to ALL "Add to Cart" buttons on any page.
-// This code will run as soon as the script is loaded.
 document.addEventListener('DOMContentLoaded', () => {
-    const allAddToCartButtons = document.querySelectorAll('.add-to-cart-button'); // Use a common class for all buttons
-    
-    allAddToCartButtons.forEach(button => {
+    const allProductButtons = document.querySelectorAll('.add-to-cart-button');
+
+    allProductButtons.forEach(button => {
         button.addEventListener('click', (event) => {
-            const productElement = event.target.closest('.product'); // Find the parent product container
-            const priceId = productElement.id;
-            const size = productElement.dataset.size; // Gets the 'S' or 'L' you added
+            const productCard = event.target.closest('.product-card');
+            
+            const product = {
+                priceId: productCard.dataset.priceId,
+                size: productCard.dataset.size,
+                name: productCard.querySelector('h3').textContent,
+                price: productCard.querySelector('.price').textContent
+            };
 
-            // Add the product to your cart object/array
-            // This is where your existing cart management logic would go.
-            console.log(`Added to cart: Product with size ${size}`);
+            // For now, we are not building a multi-item cart.
+            // Clicking "Add to Cart" will immediately start the checkout for that ONE item.
+            // This is where you would pop up a modal to ask for the shipping address.
+            
+            console.log('Starting checkout for:', product);
+            alert(`Next step: We would now ask for the shipping address for the ${product.name}.`);
 
-            // For demonstration: When do you fetch rates?
-            // Typically, you'd do this on the checkout page after the user enters their address.
-            // Let's simulate that here:
-            // const userCart = { items: [{ size: size }] };
-            // const userAddress = { street1: '123 Main St', city: 'Anytown', state: 'CA', zip: '90210', country: 'US' };
-            // fetchShippingRates(userAddress, userCart);
+            // --- THIS IS A SIMULATED NEXT STEP ---
+            // In your real code, you would get this data from a form the user fills out.
+            const simulatedAddress = {
+                street1: '164 Townsend St',
+                city: 'San Francisco',
+                state: 'CA',
+                zip: '94107',
+                country: 'US'
+            };
+
+            // After getting the address, call our function to get rates.
+            fetchShippingRates(simulatedAddress, product);
         });
     });
 });
+
+async function fetchShippingRates(customerAddress, product) {
+    console.log('Fetching rates from our secure function...');
+
+    try {
+        const response = await fetch('/.netlify/functions/get-shipping-rates', {
+            method: 'POST',
+            body: JSON.stringify({ customerAddress, product })
+        });
+
+        if (!response.ok) {
+            throw new Error('Server function failed');
+        }
+
+        const rates = await response.json();
+        
+        console.log('SUCCESS! Received rates:', rates);
+        alert(`Received ${rates.length} shipping rates! The cheapest is $${rates[0].rate}. Check the console for details.`);
+
+        // TODO: Display these rates to the user and let them choose one.
+        // After they choose, you will proceed to Stripe checkout with the final total.
+
+    } catch (error) {
+        console.error('Error fetching shipping rates:', error);
+        alert('Could not get shipping rates. Please try again.');
+    }
+}
