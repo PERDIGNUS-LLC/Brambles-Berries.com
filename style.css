@@ -130,6 +130,8 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     right: -60px;
     top: 50%;
     transform: translateY(-50%) rotate(15deg);
+    .mirrored-horizontal {
+  transform: scaleX(-1);
 }
 
 /* --- Reusable Button --- */
