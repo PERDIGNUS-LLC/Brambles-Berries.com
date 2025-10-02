@@ -1,7 +1,0 @@
-# Netlify Configuration File
-[build]
-  # Sets the folder for your serverless functions
-  functions = "netlify/functions"
-
-  # Sets the folder to publish (the dot means the root directory)
-  publish = "."
