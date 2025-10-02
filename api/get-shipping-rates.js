@@ -1,5 +1,3 @@
-// File: api/get-shipping-rates.js
-
 const EasyPost = require('@easypost/api');
 
 // This is the Vercel-native export format
