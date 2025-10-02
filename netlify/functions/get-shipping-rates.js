@@ -27,13 +27,13 @@ exports.handler = async function(event) {
   // --- ACTION REQUIRED ---
   // 2. Fill in your "ship from" address here.
   const fromAddress = {
-    street1: '123 Your Street',
-    city: 'Your City',
-    state: 'Your State',
-    zip: 'Your Zip',
+    street1: '1520 Leffingwell Avenue',
+    city: 'Grand Rapids',
+    state: 'Michigan',
+    zip: '49525',
     country: 'US',
     company: 'Brambles and Berries',
-    phone: '555-555-5555'
+    phone: '6166437988'
   };
 
   try {
