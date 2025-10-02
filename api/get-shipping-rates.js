@@ -22,13 +22,13 @@ exports.handler = async function(event) {
     }
 
     const fromAddress = {
-      street1: '125 S King St', // IMPORTANT: Use your real "ship from" address
-      city: 'Seattle',
-      state: 'WA',
-      zip: '98104',
+      street1: '1520 LEFFINGWELL AVE NE', // IMPORTANT: Use your real "ship from" address
+      city: 'GRAND RAPIDS',
+      state: 'MI',
+      zip: '49525',
       country: 'US',
-      company: 'Brambles and Berries',
-      phone: '555-555-5555'
+      company: 'PERDIGNUS LLC,
+      phone: '6167196346'
     };
 
     const shipment = await easyPostApi.Shipment.create({
