@@ -42,9 +42,10 @@ async function fetchShippingRates(customerAddress, product) {
 
     try {
         const response = await fetch('/.netlify/functions/get-shipping-rates', {
-            method: 'POST',
-            body: JSON.stringify({ customerAddress, product })
-        });
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, // <-- ADD THIS LINE
+        body: JSON.stringify({ customerAddress, product })
+    });
 
         if (!response.ok) {
             throw new Error('Server function failed');
