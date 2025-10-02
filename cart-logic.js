@@ -4,20 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const allProductButtons = document.querySelectorAll('.add-to-cart-button');
 
     allProductButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            const productCard = event.target.closest('.product-card');
-            
+        button.addEventListener('click', () => {
+            const productCard = button.closest('.product-card');
+            if (!productCard) {
+                console.error('No product card found for button');
+                return;
+            }
+
+            const nameEl = productCard.querySelector('h3');
+            const priceEl = productCard.querySelector('.price');
+
             const product = {
-                priceId: productCard.dataset.priceId,
-                size: productCard.dataset.size,
-                name: productCard.querySelector('h3').textContent,
-                price: productCard.querySelector('.price').textContent
+                priceId: productCard.dataset.priceId || null,
+                size: productCard.dataset.size || null,
+                name: nameEl ? nameEl.textContent : 'Unknown Product',
+                price: priceEl ? priceEl.textContent : '0.00'
             };
 
-            // For now, we are not building a multi-item cart.
-            // Clicking "Add to Cart" will immediately start the checkout for that ONE item.
-            // This is where you would pop up a modal to ask for the shipping address.
-            
             console.log('Starting checkout for:', product);
             alert(`Next step: We would now ask for the shipping address for the ${product.name}.`);
 
@@ -42,17 +45,23 @@ async function fetchShippingRates(customerAddress, product) {
 
     try {
         const response = await fetch('/api/get-shipping-rates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }, // <-- ADD THIS LINE
-        body: JSON.stringify({ customerAddress, product })
-    });
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customerAddress, product })
+        });
 
         if (!response.ok) {
-            throw new Error('Server function failed');
+            const text = await response.text();
+            throw new Error(`Server error: ${response.status} ${text}`);
         }
 
         const rates = await response.json();
-        
+
+        if (!rates.length) {
+            alert('No shipping rates returned.');
+            return;
+        }
+
         console.log('SUCCESS! Received rates:', rates);
         alert(`Received ${rates.length} shipping rates! The cheapest is $${rates[0].rate}. Check the console for details.`);
 
