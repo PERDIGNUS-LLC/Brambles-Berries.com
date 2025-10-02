@@ -1,0 +1,7 @@
+{
+  "name": "brambles-and-berries-site",
+  "version": "1.0.0",
+  "dependencies": {
+    "@easypost/api": "^5.9.0"
+  }
+}
