@@ -1,20 +1,24 @@
+// File: api/get-shipping-rates.js
+
 const EasyPost = require('@easypost/api');
 
-exports.handler = async function(event) {
+// This is the Vercel-native export format
+module.exports = async (req, res) => {
     try {
-        const easyPostApi = new EasyPost(process.env.EASYPOST_API_KEY); 
+        // Vercel automatically parses the body, so we just use req.body
+        const { customerAddress, product } = req.body;
+
+        const easyPostApi = new EasyPost(process.env.EASYPOST_API_KEY);
 
         const shippingProfiles = {
             S: { weight: 56.5, length: 14, width: 14, height: 2 },
             L: { weight: 115.5, length: 18, width: 12, height: 2 }
         };
 
-        const { customerAddress, product } = JSON.parse(event.body);
-
         const parcelData = shippingProfiles[product.size];
-
         if (!parcelData) {
-            return { statusCode: 400, body: JSON.stringify({ error: 'Invalid product size.' }) };
+            // In Vercel, we send responses like this
+            return res.status(400).json({ error: 'Invalid product size.' });
         }
 
         const fromAddress = {
@@ -33,16 +37,12 @@ exports.handler = async function(event) {
             parcel: parcelData
         });
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify(shipment.rates)
-        };
+        // This is the success response in Vercel's format
+        return res.status(200).json(shipment.rates);
 
     } catch (error) {
         console.error("Function Error:", error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message })
-        };
+        // This is the error response in Vercel's format
+        return res.status(500).json({ error: error.message });
     }
 };
