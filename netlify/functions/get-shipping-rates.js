@@ -49,8 +49,12 @@ exports.handler = async function(event) {
       statusCode: 200,
       body: JSON.stringify(shipment.rates)
     };
+ // INSIDE: netlify/functions/get-shipping-rates.js
+
   } catch (error) {
     console.error('EasyPost API Error:', error);
-    return { statusCode: 500, body: JSON.stringify({ error: 'Could not fetch shipping rates.' }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }) // This is the NEW line
+    };
   }
-};
