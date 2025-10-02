@@ -41,7 +41,7 @@ async function fetchShippingRates(customerAddress, product) {
     console.log('Fetching rates from our secure function...');
 
     try {
-        const response = await fetch('/.netlify/functions/get-shipping-rates', {
+        const response = await fetch('/api/get-shipping-rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }, // <-- ADD THIS LINE
         body: JSON.stringify({ customerAddress, product })
