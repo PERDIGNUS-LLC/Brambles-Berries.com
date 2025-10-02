@@ -1,12 +1,11 @@
-const EasyPost = require('@easypost/api');
-
-// This is the Vercel-native export format
 module.exports = async (req, res) => {
     try {
-        // Vercel automatically parses the body, so we just use req.body
         const { customerAddress, product } = req.body;
+        const apiKey = process.env.EASYPOST_API_KEY;
 
-        const easyPostApi = new EasyPost(process.env.EASYPOST_API_KEY);
+        if (!apiKey) {
+            throw new Error("API key is not configured.");
+        }
 
         const shippingProfiles = {
             S: { weight: 56.5, length: 14, width: 14, height: 2 },
@@ -15,7 +14,6 @@ module.exports = async (req, res) => {
 
         const parcelData = shippingProfiles[product.size];
         if (!parcelData) {
-            // In Vercel, we send responses like this
             return res.status(400).json({ error: 'Invalid product size.' });
         }
 
@@ -29,18 +27,34 @@ module.exports = async (req, res) => {
             phone: '6167196346'
         };
 
-        const shipment = await easyPostApi.Shipment.create({
-            to_address: customerAddress,
-            from_address: fromAddress,
-            parcel: parcelData
+        // We now build the API request manually and use fetch
+        const response = await fetch('https://api.easypost.com/v1/shipments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // EasyPost uses Basic Auth with the API key as the username
+                'Authorization': `Basic ${Buffer.from(apiKey + ':').toString('base64')}`
+            },
+            body: JSON.stringify({
+                shipment: {
+                    to_address: customerAddress,
+                    from_address: fromAddress,
+                    parcel: parcelData
+                }
+            })
         });
 
-        // This is the success response in Vercel's format
-        return res.status(200).json(shipment.rates);
+        const data = await response.json();
+
+        if (!response.ok) {
+            // If EasyPost returns an error, forward it
+            throw new Error(data.error.message || 'EasyPost API error');
+        }
+
+        return res.status(200).json(data.rates);
 
     } catch (error) {
         console.error("Function Error:", error);
-        // This is the error response in Vercel's format
         return res.status(500).json({ error: error.message });
     }
 };
