@@ -30,7 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "eyes1.png", label: "Eyes 1" },
       { file: "eyes2.png", label: "Eyes 2" },
       { file: "eyes3.png", label: "Eyes 3" },
-      { file: "eyes4.png", label: "Eyes 4" }
+      { file: "eyes4.png", label: "Eyes 4" },
+      { file: "eyes5.png", label: "Eyes 5" },
+      { file: "eyes6.png", label: "Eyes 6" }
     ],
     mouth: [
       { file: null, label: "None" },
