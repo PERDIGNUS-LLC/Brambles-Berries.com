@@ -85,7 +85,7 @@
                 <li class="cart-nav-item">
                     <button id="open-cart" class="cart-button">
                         Cart <span id="cart-count-pill" class="cart-count">0</span>
-                    </button>
+                    </button
                 </li>
             </ul>
         </nav>
@@ -310,26 +310,29 @@
     </div>
 </footer>
 
-<!-- ✔ Corrected Cart Drawer -->
+<!-- Dark overlay -->
 <div id="cart-overlay"></div>
 
+<!-- Sliding sidebar -->
 <div id="cart-sidebar">
-    <header style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #eee;">
+    <header>
         <h2>Your Cart</h2>
-        <button id="close-cart" style="font-size:22px;background:none;border:none;cursor:pointer;">&times;</button>
+        <button id="close-cart">&times;</button>
     </header>
 
     <div id="cart-items"></div>
 
-    <div style="padding:16px;border-top:1px solid #eee;">
-        <div style="display:flex;justify-content:space-between;">
+    <div class="cart-summary">
+        <div class="cart-summary-row">
             <span>Subtotal</span>
             <span id="cart-subtotal">$0.00</span>
         </div>
-        <button id="checkout-button" class="btn" style="width:100%;margin-top:12px;">Proceed to Checkout</button>
+        <button id="checkout-button" class="btn checkout-btn">
+            Proceed to Checkout
+        </button>
     </div>
 </div>
-
+    
 <script src="https://js.stripe.com/v3/"></script>
 <script src="cart-logic.js"></script>
 
