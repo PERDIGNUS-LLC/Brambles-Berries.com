@@ -1,7 +1,5 @@
-// File: cart-logic.js
+const stripe = Stripe("pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt");
 
-// 🔧 TODO: Replace this with your real Stripe publishable key
-// Example: const STRIPE_PUBLISHABLE_KEY = "pk_live_123...";
 const STRIPE_PUBLISHABLE_KEY = "pk_live_REPLACE_ME";
 
 let stripeInstance = null;
