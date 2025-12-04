@@ -8,37 +8,31 @@ module.exports = async (req, res) => {
             return res.status(405).json({ error: "Method not allowed" });
         }
 
-        // Parse request body
-        const { cart } = req.body;
+        const body = req.body || {};
+        const cart = body.cart;
 
         if (!cart || !Array.isArray(cart) || cart.length === 0) {
             return res.status(400).json({ error: "Cart is empty or invalid." });
         }
 
-        // Convert cart items into Stripe line items
-        const lineItems = cart.map(item => ({
-            price: item.priceId,  // STRIPE PRICE ID
-            quantity: 1           // Always quantity 1 for stools
+        const lineItems = cart.map((item) => ({
+            price: item.priceId,
+            quantity: item.quantity || 1,
         }));
 
-        console.log("Creating checkout session with line items:", lineItems);
+        console.log("Creating Stripe session with line items:", lineItems);
 
-        // Create Stripe Checkout session
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
             payment_method_types: ["card"],
             line_items: lineItems,
-
-            // The URL to return to after payment success
             success_url: `${req.headers.origin}/success.html`,
-            cancel_url: `${req.headers.origin}/cancel.html`
+            cancel_url: `${req.headers.origin}/shop.html`,
         });
 
         console.log("Stripe session created:", session.id);
 
-        // Respond with the URL Stripe returns
-        return res.status(200).json({ url: session.url });
-
+        return res.status(200).json({ id: session.id });
     } catch (error) {
         console.error("Stripe Session Error:", error);
         return res.status(500).json({ error: error.message });
