@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartDrawer = document.getElementById('cartDrawer');
     const cartOverlay = document.getElementById('cartOverlay');
     const closeCartButton = document.getElementById('closeCartButton');
-    const cartItemsContainer = document.getElementById('cartItemsContainer');
-    const cartSubtotal = document.getElementById('cartSubtotal');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartSubtotal = document.getElementById('cart-subtotal');
     const checkoutButton = document.getElementById('checkoutButton');
     const cartCount = document.getElementById('cartCount');
 
