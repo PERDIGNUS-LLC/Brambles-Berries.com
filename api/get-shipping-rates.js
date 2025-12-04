@@ -1,10 +1,30 @@
 export default async function handler(req, res) {
-    try {
-        const { customerAddress, product } = req.body;
-        const apiKey = process.env.EASYPOST_API_KEY;
+    // Only allow POST
+    if (req.method !== 'POST') {
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
+    }
 
+    try {
+        // --- Parse JSON body manually (Vercel Node functions don’t give you req.body) ---
+        const rawBody = await getRawBody(req);
+        let parsed;
+
+        try {
+            parsed = rawBody ? JSON.parse(rawBody) : {};
+        } catch (e) {
+            return res.status(400).json({ error: 'Invalid JSON body.' });
+        }
+
+        const { customerAddress, product } = parsed;
+
+        if (!customerAddress || !product || !product.size) {
+            return res.status(400).json({ error: 'Missing customerAddress or product.size in request body.' });
+        }
+
+        const apiKey = process.env.EASYPOST_API_KEY;
         if (!apiKey) {
-            throw new Error("API key is not configured.");
+            throw new Error('API key is not configured.');
         }
 
         const shippingProfiles = {
@@ -31,6 +51,7 @@ export default async function handler(req, res) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                // EasyPost uses Basic Auth with the API key as the username
                 'Authorization': `Basic ${Buffer.from(apiKey + ':').toString('base64')}`
             },
             body: JSON.stringify({
@@ -45,13 +66,36 @@ export default async function handler(req, res) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error?.message || 'EasyPost API error');
+            // If EasyPost returns an error, forward it
+            const msg =
+                (data && data.error && data.error.message) ||
+                (Array.isArray(data?.errors) && data.errors[0]?.message) ||
+                'EasyPost API error';
+            throw new Error(msg);
         }
 
-        return res.status(200).json(data.rates);
+        // Send back just the rates array
+        return res.status(200).json(data.rates || []);
 
     } catch (error) {
-        console.error("Function Error:", error);
-        return res.status(500).json({ error: error.message });
+        console.error('Function Error:', error);
+        return res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
+}
+
+/**
+ * Read the raw request body into a string.
+ * Works in Vercel Node.js serverless functions.
+ */
+function getRawBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', () => resolve(body));
+        req.on('error', reject);
+    });
 }
