@@ -1,54 +1,64 @@
-// force update 1
 // File: cart-logic.js
-// Rewritten to match EXACT shop.html IDs
+// Matches current shop.html IDs and class names
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    // ---- DOM ELEMENTS (MATCHING YOUR HTML EXACTLY) ----
-    const openCartButton = document.getElementById('openCartButton');
-    const cartDrawer = document.getElementById('cartDrawer');
-    const cartOverlay = document.getElementById('cartOverlay');
-    const closeCartButton = document.getElementById('closeCartButton');
+    // ---- DOM ELEMENTS (MATCH YOUR shop.html) ----
+    const openCartButton   = document.getElementById('open-cart');
+    const cartOverlay      = document.getElementById('cart-overlay');
+    const cartSidebar      = document.getElementById('cart-sidebar');
+    const closeCartButton  = document.getElementById('close-cart');
     const cartItemsContainer = document.getElementById('cart-items');
-    const cartSubtotal = document.getElementById('cart-subtotal');
-    const checkoutButton = document.getElementById('checkoutButton');
-    const cartCount = document.getElementById('cartCount');
+    const cartSubtotalEl   = document.getElementById('cart-subtotal');
+    const checkoutButton   = document.getElementById('checkout-button');
+    const cartCountPill    = document.getElementById('cart-count-pill');
 
     const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
 
     const STORAGE_KEY = 'bb_cart_items';
+
+    // ---- CART STATE ----
     let cart = loadCart();
     renderCart();
 
-
     // ---- CART OPEN/CLOSE ----
     function openCart() {
-        cartDrawer.classList.add('open');
+        if (cartOverlay) cartOverlay.style.display = 'block';
+        if (cartSidebar) cartSidebar.style.right = '0';
     }
 
     function closeCart() {
-        cartDrawer.classList.remove('open');
+        if (cartOverlay) cartOverlay.style.display = 'none';
+        if (cartSidebar) cartSidebar.style.right = '-420px';
     }
 
-    openCartButton?.addEventListener('click', openCart);
-    closeCartButton?.addEventListener('click', closeCart);
-    cartOverlay?.addEventListener('click', closeCart);
-
+    if (openCartButton) {
+        openCartButton.addEventListener('click', openCart);
+    }
+    if (closeCartButton) {
+        closeCartButton.addEventListener('click', closeCart);
+    }
+    if (cartOverlay) {
+        cartOverlay.addEventListener('click', closeCart);
+    }
 
     // ---- LOAD/SAVE ----
     function loadCart() {
         try {
             const json = localStorage.getItem(STORAGE_KEY);
-            return json ? JSON.parse(json) : [];
+            const parsed = json ? JSON.parse(json) : [];
+            return Array.isArray(parsed) ? parsed : [];
         } catch {
             return [];
         }
     }
 
     function saveCart() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        } catch {
+            // ignore storage errors
+        }
     }
-
 
     // ---- ADD TO CART ----
     addToCartButtons.forEach(button => {
@@ -56,25 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = button.closest('.product-card');
             if (!card) return;
 
-            const name = card.querySelector('h3')?.textContent.trim() || 'Item';
+            const name  = card.querySelector('h3')?.textContent.trim() || 'Item';
             const price = card.querySelector('.price')?.textContent.trim() || '$0';
-            const priceId = card.dataset.priceId;
-            const size = card.dataset.size;
+            const priceId = card.dataset.priceId || '';
+            const size    = card.dataset.size || '';
+            const img     = card.querySelector('img')?.src || '';
 
             const existingIndex = cart.findIndex(
                 item => item.priceId === priceId && item.size === size
             );
 
             if (existingIndex >= 0) {
-                cart[existingIndex].quantity++;
+                cart[existingIndex].quantity += 1;
             } else {
                 cart.push({
                     name,
                     price,
                     priceId,
                     size,
-                    quantity: 1,
-                    img: card.querySelector('img')?.src || ''
+                    img,
+                    quantity: 1
                 });
             }
 
@@ -83,13 +94,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-
     // ---- RENDER CART ----
     function renderCart() {
+        if (!cartItemsContainer || !cartSubtotalEl || !cartCountPill) {
+            return; // HTML not present, nothing to render
+        }
+
         cartItemsContainer.innerHTML = '';
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = `<p>Your cart is empty.</p>`;
+            cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
         } else {
             cart.forEach((item, index) => {
                 const row = document.createElement('div');
@@ -104,60 +118,73 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                row.querySelector('.cart-item-remove').addEventListener('click', () => {
-                    cart.splice(index, 1);
-                    renderCart();
-                });
+                const removeBtn = row.querySelector('.cart-item-remove');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', () => {
+                        cart.splice(index, 1);
+                        renderCart();
+                    });
+                }
 
                 cartItemsContainer.appendChild(row);
             });
         }
 
         const subtotal = calculateSubtotal();
-        cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+        cartSubtotalEl.textContent = `$${subtotal.toFixed(2)}`;
 
-        cartCount.textContent = cart.reduce((t, i) => t + i.quantity, 0);
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountPill.textContent = totalItems;
 
-        checkoutButton.disabled = cart.length === 0;
+        if (checkoutButton) {
+            checkoutButton.disabled = cart.length === 0;
+        }
 
         saveCart();
     }
 
-
     function calculateSubtotal() {
         return cart.reduce((acc, item) => {
-            const priceNum = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+            const priceNum = parseFloat(
+                String(item.price).replace(/[^0-9.]/g, '')
+            ) || 0;
             return acc + priceNum * item.quantity;
         }, 0);
     }
 
-
     // ---- CHECKOUT ----
-    checkoutButton.addEventListener('click', async () => {
-        if (cart.length === 0) return;
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', async () => {
+            if (!cart.length) return;
 
-        checkoutButton.textContent = 'Processing...';
-        checkoutButton.disabled = true;
+            checkoutButton.textContent = 'Processing...';
+            checkoutButton.disabled = true;
 
-        try {
-            const res = await fetch('/api/create-checkout-session', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: cart })
-            });
+            try {
+                const res = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: cart })
+                });
 
-            const data = await res.json();
+                const data = await res.json();
 
-            if (!res.ok) throw new Error(data.error || 'Checkout failed.');
+                if (!res.ok) {
+                    throw new Error(data.error || 'Checkout failed.');
+                }
 
-            window.location.href = data.url;
-        } catch (err) {
-            console.error(err);
-            alert(err.message);
-        } finally {
-            checkoutButton.textContent = 'Proceed to Checkout';
-            checkoutButton.disabled = false;
-        }
-    });
-
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('No checkout URL returned.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Unable to start checkout.');
+            } finally {
+                checkoutButton.textContent = 'Proceed to Checkout';
+                checkoutButton.disabled = cart.length === 0;
+            }
+        });
+    }
 });
