@@ -1,22 +1,25 @@
-const stripe = Stripe("pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt");
+// File: cart-logic.js
 
-const STRIPE_PUBLISHABLE_KEY = "pk_live_REPLACE_ME";
+// 🔑 Stripe Publishable Key (frontend). This one is safe to be public.
+const STRIPE_PUBLISHABLE_KEY = "pk_live_51SBmn37ywjQM5ca8riRBkuS6PLt7UUU4RSXzsJte8xXZxuTmjKnR5EcMLLCaHWFmk7j4ElguOMAFfykiyhL72ayC0049Aejzrt";
 
-let stripeInstance = null;
+// Initialize Stripe.js
+let stripe = null;
 function getStripe() {
-    if (!STRIPE_PUBLISHABLE_KEY || STRIPE_PUBLISHABLE_KEY.includes("REPLACE_ME")) {
-        console.warn("Stripe publishable key not set in cart-logic.js");
+    if (!STRIPE_PUBLISHABLE_KEY || STRIPE_PUBLISHABLE_KEY.includes("REPLACE")) {
+        console.error("Stripe publishable key is not set correctly in cart-logic.js");
         return null;
     }
-    if (!stripeInstance) {
-        stripeInstance = Stripe(STRIPE_PUBLISHABLE_KEY);
+    if (!stripe) {
+        stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
     }
-    return stripeInstance;
+    return stripe;
 }
 
 let cart = [];
-
 const CART_STORAGE_KEY = "bb_cart";
+
+// ---- Cart persistence helpers ----
 
 function loadCart() {
     try {
@@ -25,10 +28,10 @@ function loadCart() {
             cart = [];
             return;
         }
-        cart = JSON.parse(raw);
-        if (!Array.isArray(cart)) cart = [];
-    } catch (e) {
-        console.error("Error loading cart from localStorage:", e);
+        const parsed = JSON.parse(raw);
+        cart = Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+        console.error("Error loading cart from localStorage:", err);
         cart = [];
     }
 }
@@ -36,23 +39,9 @@ function loadCart() {
 function saveCart() {
     try {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    } catch (e) {
-        console.error("Error saving cart to localStorage:", e);
+    } catch (err) {
+        console.error("Error saving cart to localStorage:", err);
     }
-}
-
-function getCartCount() {
-    return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-}
-
-function updateCartCountDisplay() {
-    const countEl = document.getElementById("cartCount");
-    if (!countEl) return;
-    countEl.textContent = getCartCount();
-}
-
-function formatPriceNumber(num) {
-    return "$" + num.toFixed(2);
 }
 
 function parsePriceString(priceText) {
@@ -61,18 +50,35 @@ function parsePriceString(priceText) {
     return isNaN(n) ? 0 : n;
 }
 
+function formatPrice(num) {
+    return "$" + num.toFixed(2);
+}
+
+function getCartCount() {
+    return cart.reduce((total, item) => total + (item.quantity || 1), 0);
+}
+
+// ---- UI Updates ----
+
+function updateCartCountDisplay() {
+    const countEl = document.getElementById("cartCount");
+    if (!countEl) return;
+    countEl.textContent = getCartCount();
+}
+
 function updateSubtotalDisplay() {
     const subtotalEl = document.getElementById("cartSubtotal");
     if (!subtotalEl) return;
 
     const subtotal = cart.reduce((sum, item) => {
-        const price = typeof item.priceNumber === "number"
-            ? item.priceNumber
-            : parsePriceString(item.price);
-        return sum + price * (item.quantity || 1);
+        const priceNumber =
+            typeof item.priceNumber === "number"
+                ? item.priceNumber
+                : parsePriceString(item.price);
+        return sum + priceNumber * (item.quantity || 1);
     }, 0);
 
-    subtotalEl.textContent = formatPriceNumber(subtotal);
+    subtotalEl.textContent = formatPrice(subtotal);
 }
 
 function renderCart() {
@@ -80,7 +86,7 @@ function renderCart() {
     if (!container) return;
 
     if (!cart.length) {
-        container.innerHTML = `<p>Your cart is empty.</p>`;
+        container.innerHTML = "<p>Your cart is empty.</p>";
         updateCartCountDisplay();
         updateSubtotalDisplay();
         return;
@@ -111,10 +117,11 @@ function renderCart() {
 
         const priceEl = document.createElement("div");
         priceEl.className = "cart-item-price";
-        const priceNumber = typeof item.priceNumber === "number"
-            ? item.priceNumber
-            : parsePriceString(item.price);
-        priceEl.textContent = formatPriceNumber(priceNumber);
+        const priceNumber =
+            typeof item.priceNumber === "number"
+                ? item.priceNumber
+                : parsePriceString(item.price);
+        priceEl.textContent = formatPrice(priceNumber);
 
         const removeBtn = document.createElement("button");
         removeBtn.className = "cart-item-remove";
@@ -145,7 +152,22 @@ function removeCartItem(index) {
     renderCart();
 }
 
-// Add item to cart; if same product/size/priceId, increase quantity
+// ---- Drawer open/close ----
+
+function openCartDrawer() {
+    const drawer = document.getElementById("cartDrawer");
+    if (!drawer) return;
+    drawer.classList.add("open");
+}
+
+function closeCartDrawer() {
+    const drawer = document.getElementById("cartDrawer");
+    if (!drawer) return;
+    drawer.classList.remove("open");
+}
+
+// ---- Add items to cart ----
+
 function addToCartFromCard(productCard) {
     const nameEl = productCard.querySelector("h3");
     const priceEl = productCard.querySelector(".price");
@@ -161,7 +183,7 @@ function addToCartFromCard(productCard) {
 
     const priceNumber = parsePriceString(product.price);
 
-    // Try to merge with existing item
+    // Try to merge with existing matching item
     const existing = cart.find(
         (item) =>
             item.priceId === product.priceId &&
@@ -181,62 +203,48 @@ function addToCartFromCard(productCard) {
 
     saveCart();
     renderCart();
+    openCartDrawer();
 }
 
-// Drawer open/close
-function openCartDrawer() {
-    const drawer = document.getElementById("cartDrawer");
-    if (!drawer) return;
-    drawer.classList.add("open");
-}
+// ---- Stripe Checkout ----
 
-function closeCartDrawer() {
-    const drawer = document.getElementById("cartDrawer");
-    if (!drawer) return;
-    drawer.classList.remove("open");
-}
-
-// Proceed to Stripe Checkout
 async function proceedToCheckout() {
     if (!cart.length) {
         alert("Your cart is empty.");
         return;
     }
 
-    const stripe = getStripe();
-    if (!stripe) {
-        alert("Stripe is not configured yet. Set STRIPE_PUBLISHABLE_KEY in cart-logic.js.");
-        console.error("Stripe not configured.");
+    const stripeClient = getStripe();
+    if (!stripeClient) {
+        alert("Stripe is not configured correctly. Check the publishable key in cart-logic.js.");
         return;
     }
 
-    // Only include items that have Stripe price IDs
-    const lineItems = cart
+    // Only send items that actually have Stripe price IDs
+    const payloadCart = cart
         .filter((item) => item.priceId)
         .map((item) => ({
-            price: item.priceId,
+            priceId: item.priceId,
             quantity: item.quantity || 1,
         }));
 
-    if (!lineItems.length) {
+    if (!payloadCart.length) {
         alert("No items in your cart have Stripe price IDs configured.");
         console.error("Cart items missing priceId:", cart);
         return;
     }
 
-    try {
-        // Call your backend to create a Checkout Session
-        // You MUST implement /api/create-checkout-session on the server.
+    try:
         const response = await fetch("/api/create-checkout-session", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ lineItems }),
+            body: JSON.stringify({ cart: payloadCart }),
         });
 
         if (!response.ok) {
             const text = await response.text();
             console.error("Error from create-checkout-session:", response.status, text);
-            alert("Failed to start checkout. Check console/logs for details.");
+            alert("Failed to start checkout. See console for details.");
             return;
         }
 
@@ -247,7 +255,7 @@ async function proceedToCheckout() {
             return;
         }
 
-        const { error } = await stripe.redirectToCheckout({
+        const { error } = await stripeClient.redirectToCheckout({
             sessionId: data.id,
         });
 
@@ -260,6 +268,8 @@ async function proceedToCheckout() {
         alert("Could not start checkout. Please try again.");
     }
 }
+
+// ---- Wire up events on DOM ready ----
 
 document.addEventListener("DOMContentLoaded", () => {
     loadCart();
@@ -274,7 +284,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             addToCartFromCard(productCard);
-            openCartDrawer();
         });
     });
 
