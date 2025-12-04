@@ -1,25 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brambles and Berries - Whimsical Stepping Stools for Children</title>
 
-    <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet"
-    />
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
-    <!-- Cart drawer styles (only for cart UI) -->
+    <!-- Cart UI styles (minimal, scoped to cart) -->
     <style>
-        .cart-icon-container {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .cart-nav-item {
+            margin-left: 16px;
         }
 
         .cart-button {
@@ -31,6 +25,7 @@
             color: #fff;
             font-weight: 600;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .cart-count {
@@ -77,7 +72,7 @@
             width: 360px;
             max-width: 90vw;
             height: 100%;
-            background: #fff;
+            background: #ffffff;
             box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
             transform: translateX(100%);
             transition: transform 0.25s ease;
@@ -106,6 +101,7 @@
             border: none;
             font-size: 22px;
             cursor: pointer;
+            line-height: 1;
         }
 
         .cart-items {
@@ -188,7 +184,7 @@
 <body>
 
     <header class="main-header">
-        <div class="container" style="display:flex; align-items:center; gap:16px;">
+        <div class="container">
             <a href="index.html" class="logo-link">
                 <img src="images/logo.png" alt="Brambles and Berries Logo" class="logo-image">
             </a>
@@ -198,15 +194,14 @@
                     <li><a href="shop.html" class="active">Shop</a></li>
                     <li><a href="about.html">About Us</a></li>
                     <li><a href="contact.html">Contact</a></li>
+                    <!-- Cart button inside nav -->
+                    <li class="cart-nav-item">
+                        <button class="cart-button" id="openCartButton">
+                            Cart <span id="cartCount" class="cart-count">0</span>
+                        </button>
+                    </li>
                 </ul>
             </nav>
-
-            <!-- 🔹 Cart button in header -->
-            <div class="cart-icon-container">
-                <button class="cart-button" id="openCartButton">
-                    Cart <span id="cartCount" class="cart-count">0</span>
-                </button>
-            </div>
         </div>
     </header>
 
