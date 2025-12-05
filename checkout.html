@@ -11,23 +11,48 @@
         <h2>Shipping Information</h2>
         <p>Please enter your shipping address so we can calculate the exact shipping cost.</p>
 
-        <form id="shippingForm" autocomplete="off">
+        <form id="shippingForm" autocomplete="on">
             <label>Street Address</label>
-            <!-- This field gets Google Places autocomplete -->
-            <input type="text" id="street1" required />
+            <input
+                type="text"
+                id="street1"
+                required
+                autocomplete="address-line1"
+            />
 
             <label>City</label>
-            <input type="text" id="city" required />
+            <input
+                type="text"
+                id="city"
+                required
+                autocomplete="address-level2"
+            />
 
             <label>State</label>
-            <!-- We’ll fill this with 2-letter codes like WI, CA, etc. -->
-            <input type="text" id="state" required />
+            <!-- We will normalize this to a 2-letter code before sending -->
+            <input
+                type="text"
+                id="state"
+                required
+                autocomplete="address-level1"
+            />
 
             <label>ZIP Code</label>
-            <input type="text" id="zip" required />
+            <input
+                type="text"
+                id="zip"
+                required
+                autocomplete="postal-code"
+            />
 
             <label>Country</label>
-            <input type="text" id="country" value="US" required />
+            <input
+                type="text"
+                id="country"
+                value="US"
+                required
+                autocomplete="country"
+            />
 
             <button class="btn" type="submit" style="margin-top:20px;">
                 Get Shipping Rates
@@ -45,74 +70,63 @@
         </button>
     </div>
 
-    <!-- Your existing cart logic (unchanged) -->
+    <!-- your existing cart sidebar logic -->
     <script src="cart-logic.js"></script>
 
-    <!-- Google Places API (replace YOUR_API_KEY_HERE) -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places&callback=initAddressAutocomplete"
-      async
-      defer
-    ></script>
-
     <script>
-    // Called by Google script once Places library is loaded
-    function initAddressAutocomplete() {
-        const streetInput = document.getElementById("street1");
-        if (!streetInput || !window.google || !google.maps.places) return;
-
-        const autocomplete = new google.maps.places.Autocomplete(streetInput, {
-            types: ["address"],
-            componentRestrictions: { country: "us" }
-        });
-
-        autocomplete.addListener("place_changed", () => {
-            const place = autocomplete.getPlace();
-            if (!place || !place.address_components) return;
-
-            let streetNumber = "";
-            let route = "";
-            let city = "";
-            let state = "";
-            let postalCode = "";
-            let country = "";
-
-            place.address_components.forEach((comp) => {
-                const types = comp.types || [];
-                if (types.includes("street_number")) {
-                    streetNumber = comp.long_name;
-                }
-                if (types.includes("route")) {
-                    route = comp.long_name;
-                }
-                if (types.includes("locality")) {
-                    city = comp.long_name;
-                }
-                if (types.includes("administrative_area_level_1")) {
-                    // short_name gives "WI" instead of "Wisconsin"
-                    state = comp.short_name;
-                }
-                if (types.includes("postal_code")) {
-                    postalCode = comp.long_name;
-                }
-                if (types.includes("country")) {
-                    country = comp.short_name; // "US"
-                }
-            });
-
-            const streetField = document.getElementById("street1");
-            const cityField   = document.getElementById("city");
-            const stateField  = document.getElementById("state");
-            const zipField    = document.getElementById("zip");
-            const countryField= document.getElementById("country");
-
-            if (streetField)  streetField.value  = [streetNumber, route].filter(Boolean).join(" ");
-            if (cityField)    cityField.value    = city;
-            if (stateField)   stateField.value   = state;
-            if (zipField)     zipField.value     = postalCode;
-            if (countryField) countryField.value = country || "US";
-        });
-    }
+    // Map full state names to 2-letter codes for EasyPost
+    const US_STATE_ABBREVS = {
+        "ALABAMA": "AL",
+        "ALASKA": "AK",
+        "ARIZONA": "AZ",
+        "ARKANSAS": "AR",
+        "CALIFORNIA": "CA",
+        "COLORADO": "CO",
+        "CONNECTICUT": "CT",
+        "DELAWARE": "DE",
+        "FLORIDA": "FL",
+        "GEORGIA": "GA",
+        "HAWAII": "HI",
+        "IDAHO": "ID",
+        "ILLINOIS": "IL",
+        "INDIANA": "IN",
+        "IOWA": "IA",
+        "KANSAS": "KS",
+        "KENTUCKY": "KY",
+        "LOUISIANA": "LA",
+        "MAINE": "ME",
+        "MARYLAND": "MD",
+        "MASSACHUSETTS": "MA",
+        "MICHIGAN": "MI",
+        "MINNESOTA": "MN",
+        "MISSISSIPPI": "MS",
+        "MISSOURI": "MO",
+        "MONTANA": "MT",
+        "NEBRASKA": "NE",
+        "NEVADA": "NV",
+        "NEW HAMPSHIRE": "NH",
+        "NEW JERSEY": "NJ",
+        "NEW MEXICO": "NM",
+        "NEW YORK": "NY",
+        "NORTH CAROLINA": "NC",
+        "NORTH DAKOTA": "ND",
+        "OHIO": "OH",
+        "OKLAHOMA": "OK",
+        "OREGON": "OR",
+        "PENNSYLVANIA": "PA",
+        "RHODE ISLAND": "RI",
+        "SOUTH CAROLINA": "SC",
+        "SOUTH DAKOTA": "SD",
+        "TENNESSEE": "TN",
+        "TEXAS": "TX",
+        "UTAH": "UT",
+        "VERMONT": "VT",
+        "VIRGINIA": "VA",
+        "WASHINGTON": "WA",
+        "WEST VIRGINIA": "WV",
+        "WISCONSIN": "WI",
+        "WYOMING": "WY"
+    };
 
     document.addEventListener("DOMContentLoaded", () => {
         let selectedRate = null;
@@ -123,19 +137,48 @@
         const ratesList      = document.getElementById("ratesList");
         const continueBtn    = document.getElementById("continueToPayment");
 
+        // Normalize address for EasyPost
+        function buildAndNormalizeAddress() {
+            let street  = document.getElementById("street1").value.trim();
+            let city    = document.getElementById("city").value.trim();
+            let state   = document.getElementById("state").value.trim();
+            let zip     = document.getElementById("zip").value.trim();
+            let country = document.getElementById("country").value.trim();
+
+            // Normalize state → 2-letter abbreviation if full name given
+            let upperState = state.toUpperCase();
+            if (upperState.length > 2) {
+                if (US_STATE_ABBREVS[upperState]) {
+                    upperState = US_STATE_ABBREVS[upperState];
+                }
+            }
+            // Normalize country → US
+            let upperCountry = country.toUpperCase();
+            if (upperCountry === "UNITED STATES" || upperCountry === "UNITED STATES OF AMERICA" || upperCountry === "USA") {
+                upperCountry = "US";
+            }
+
+            return {
+                street1: street,
+                city,
+                state: upperState,
+                zip,
+                country: upperCountry || "US"
+            };
+        }
+
         // When the shipping form is submitted:
         if (shippingForm) {
             shippingForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                // Collect address (state will now be an abbreviation like "WI")
-                shippingData = {
-                    street1: document.getElementById("street1").value.trim(),
-                    city:    document.getElementById("city").value.trim(),
-                    state:   document.getElementById("state").value.trim(),
-                    zip:     document.getElementById("zip").value.trim(),
-                    country: document.getElementById("country").value.trim(),
-                };
+                shippingData = buildAndNormalizeAddress();
+
+                // Quick sanity check: US & 5-digit zip
+                if (!/^\d{5}(-\d{4})?$/.test(shippingData.zip)) {
+                    alert("Please enter a valid ZIP code.");
+                    return;
+                }
 
                 const cart = JSON.parse(localStorage.getItem("bb_cart_items") || "[]");
                 if (!cart.length) {
