@@ -2,7 +2,7 @@
 // Matches current shop.html IDs and class names
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ---- DOM ELEMENTS (MATCH YOUR shop.html) ----
+    // ---- DOM ELEMENTS ----
     const openCartButton   = document.getElementById('open-cart');
     const cartOverlay      = document.getElementById('cart-overlay');
     const cartSidebar      = document.getElementById('cart-sidebar');
@@ -31,15 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cartSidebar) cartSidebar.style.right = '-420px';
     }
 
-    if (openCartButton) {
-        openCartButton.addEventListener('click', openCart);
-    }
-    if (closeCartButton) {
-        closeCartButton.addEventListener('click', closeCart);
-    }
-    if (cartOverlay) {
-        cartOverlay.addEventListener('click', closeCart);
-    }
+    if (openCartButton) openCartButton.addEventListener('click', openCart);
+    if (closeCartButton) closeCartButton.addEventListener('click', closeCart);
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
     // ---- LOAD/SAVE ----
     function loadCart() {
@@ -55,9 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveCart() {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
-        } catch {
-            // ignore storage errors
-        }
+        } catch {}
     }
 
     // ---- ADD TO CART ----
@@ -96,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- RENDER CART ----
     function renderCart() {
-        if (!cartItemsContainer || !cartSubtotalEl || !cartCountPill) {
-            return; // HTML not present, nothing to render
-        }
+        if (!cartItemsContainer || !cartSubtotalEl || !cartCountPill) return;
 
         cartItemsContainer.innerHTML = '';
 
@@ -119,12 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
                 const removeBtn = row.querySelector('.cart-item-remove');
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', () => {
-                        cart.splice(index, 1);
-                        renderCart();
-                    });
-                }
+                removeBtn.addEventListener('click', () => {
+                    cart.splice(index, 1);
+                    renderCart();
+                });
 
                 cartItemsContainer.appendChild(row);
             });
@@ -152,40 +140,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 0);
     }
 
-    // ---- CHECKOUT ----
-
+    // ------------------------------------------------------------
+    // ✅ FIXED CHECKOUT — SEND CART TO YOUR API
+    // ------------------------------------------------------------
     if (checkoutButton) {
         checkoutButton.addEventListener('click', async () => {
-            if (cart.length === 0) return;
-
-            checkoutButton.disabled = true;
-            checkoutButton.textContent = "Processing...";
-
             try {
-                const response = await fetch("/api/create-checkout-session", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ items: cart })
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cart })
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || "Checkout failed.");
+                    alert(`Checkout Error: ${data.error || 'Unknown error'}`);
+                    return;
                 }
 
                 // Redirect to Stripe Checkout
                 window.location.href = data.url;
 
             } catch (err) {
-                console.error("Checkout error:", err);
-                alert("Error starting checkout: " + err.message);
-            } finally {
-                checkoutButton.disabled = false;
-                checkoutButton.textContent = "Proceed to Checkout";
+                alert('Checkout Failed: ' + err.message);
             }
         });
     }
 });
-
-   
