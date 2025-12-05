@@ -153,38 +153,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---- CHECKOUT ----
+
     if (checkoutButton) {
         checkoutButton.addEventListener('click', async () => {
-            if (!cart.length) return;
+            if (cart.length === 0) return;
 
-            checkoutButton.textContent = 'Processing...';
             checkoutButton.disabled = true;
+            checkoutButton.textContent = "Processing...";
 
             try {
-                const res = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch("/api/create-checkout-session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ items: cart })
                 });
 
-                const data = await res.json();
+                const data = await response.json();
 
-                if (!res.ok) {
-                    throw new Error(data.error || 'Checkout failed.');
+                if (!response.ok) {
+                    throw new Error(data.error || "Checkout failed.");
                 }
 
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    throw new Error('No checkout URL returned.');
-                }
+                // Redirect to Stripe Checkout
+                window.location.href = data.url;
+
             } catch (err) {
-                console.error(err);
-                alert(err.message || 'Unable to start checkout.');
+                console.error("Checkout error:", err);
+                alert("Error starting checkout: " + err.message);
             } finally {
-                checkoutButton.textContent = 'Proceed to Checkout';
-                checkoutButton.disabled = cart.length === 0;
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = "Proceed to Checkout";
             }
         });
     }
 });
+
+   
