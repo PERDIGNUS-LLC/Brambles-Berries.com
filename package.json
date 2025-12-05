@@ -2,11 +2,14 @@
   "name": "brambles-berries",
   "version": "1.0.0",
   "description": "Brambles & Berries static site with API handlers",
-  "type": "module",
   "main": "index.js",
-  "license": "MIT",
+  "type": "module",
   "scripts": {
     "build": "",
     "start": ""
+  },
+  "license": "MIT",
+  "dependencies": {
+    "stripe": "^14.0.0"
   }
 }
