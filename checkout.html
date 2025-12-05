@@ -11,14 +11,16 @@
         <h2>Shipping Information</h2>
         <p>Please enter your shipping address so we can calculate the exact shipping cost.</p>
 
-        <form id="shippingForm">
+        <form id="shippingForm" autocomplete="off">
             <label>Street Address</label>
+            <!-- This field gets Google Places autocomplete -->
             <input type="text" id="street1" required />
 
             <label>City</label>
             <input type="text" id="city" required />
 
             <label>State</label>
+            <!-- We’ll fill this with 2-letter codes like WI, CA, etc. -->
             <input type="text" id="state" required />
 
             <label>ZIP Code</label>
@@ -43,48 +45,110 @@
         </button>
     </div>
 
-    <!-- Keep your existing cart logic; it's safe here -->
+    <!-- Your existing cart logic (unchanged) -->
     <script src="cart-logic.js"></script>
 
-    <!-- Shipping + Checkout logic -->
+    <!-- Google Places API (replace YOUR_API_KEY_HERE) -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places&callback=initAddressAutocomplete"
+      async
+      defer
+    ></script>
+
     <script>
+    // Called by Google script once Places library is loaded
+    function initAddressAutocomplete() {
+        const streetInput = document.getElementById("street1");
+        if (!streetInput || !window.google || !google.maps.places) return;
+
+        const autocomplete = new google.maps.places.Autocomplete(streetInput, {
+            types: ["address"],
+            componentRestrictions: { country: "us" }
+        });
+
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (!place || !place.address_components) return;
+
+            let streetNumber = "";
+            let route = "";
+            let city = "";
+            let state = "";
+            let postalCode = "";
+            let country = "";
+
+            place.address_components.forEach((comp) => {
+                const types = comp.types || [];
+                if (types.includes("street_number")) {
+                    streetNumber = comp.long_name;
+                }
+                if (types.includes("route")) {
+                    route = comp.long_name;
+                }
+                if (types.includes("locality")) {
+                    city = comp.long_name;
+                }
+                if (types.includes("administrative_area_level_1")) {
+                    // short_name gives "WI" instead of "Wisconsin"
+                    state = comp.short_name;
+                }
+                if (types.includes("postal_code")) {
+                    postalCode = comp.long_name;
+                }
+                if (types.includes("country")) {
+                    country = comp.short_name; // "US"
+                }
+            });
+
+            const streetField = document.getElementById("street1");
+            const cityField   = document.getElementById("city");
+            const stateField  = document.getElementById("state");
+            const zipField    = document.getElementById("zip");
+            const countryField= document.getElementById("country");
+
+            if (streetField)  streetField.value  = [streetNumber, route].filter(Boolean).join(" ");
+            if (cityField)    cityField.value    = city;
+            if (stateField)   stateField.value   = state;
+            if (zipField)     zipField.value     = postalCode;
+            if (countryField) countryField.value = country || "US";
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         let selectedRate = null;
         let shippingData = null;
 
-        const shippingForm = document.getElementById("shippingForm");
+        const shippingForm   = document.getElementById("shippingForm");
         const ratesContainer = document.getElementById("ratesContainer");
-        const ratesList = document.getElementById("ratesList");
-        const continueBtn = document.getElementById("continueToPayment");
+        const ratesList      = document.getElementById("ratesList");
+        const continueBtn    = document.getElementById("continueToPayment");
 
         // When the shipping form is submitted:
         if (shippingForm) {
             shippingForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                // Collect address
+                // Collect address (state will now be an abbreviation like "WI")
                 shippingData = {
                     street1: document.getElementById("street1").value.trim(),
-                    city: document.getElementById("city").value.trim(),
-                    state: document.getElementById("state").value.trim(),
-                    zip: document.getElementById("zip").value.trim(),
+                    city:    document.getElementById("city").value.trim(),
+                    state:   document.getElementById("state").value.trim(),
+                    zip:     document.getElementById("zip").value.trim(),
                     country: document.getElementById("country").value.trim(),
                 };
 
-                // Load cart from storage
                 const cart = JSON.parse(localStorage.getItem("bb_cart_items") || "[]");
                 if (!cart.length) {
                     alert("Your cart is empty.");
                     return;
                 }
 
-                // Request rates (match API expectations: customerAddress + product)
                 const res = await fetch("/api/get-shipping-rates", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         customerAddress: shippingData,
-                        product: cart[0]       // use first item for size-based shipping
+                        product: cart[0] // first item, for size-based shipping
                     })
                 });
 
@@ -97,7 +161,6 @@
 
                 const rates = Array.isArray(data) ? data : [];
 
-                // Show rate options
                 ratesList.innerHTML = "";
                 ratesContainer.style.display = "block";
 
@@ -112,7 +175,6 @@
                         selectedRate = rate;
                         continueBtn.style.display = "block";
 
-                        // Highlight selection
                         [...ratesList.children].forEach(el => el.style.background = "");
                         btn.style.background = "#d6ffd6";
                     };
