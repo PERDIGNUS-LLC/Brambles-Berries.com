@@ -1,4 +1,9 @@
 {
-  "projectId": "prj_sqHz1Mq4XsNuZHrdXjLaPffd3ydd",
-  "orgId": "team_o6UMBwaGrGIomf17xwUjBXvG"
+  "name": "brambles-berries",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "20.x"
+  }
 }
