@@ -17,6 +17,10 @@ export default async function handler(req, res) {
         }
 
         const { customerAddress, product } = parsed;
+        
+        console.log("📦 Incoming parsed body:", parsed);
+        console.log("📦 customerAddress:", customerAddress);
+        console.log("📦 product:", product);
 
         if (!customerAddress || !product || !product.size) {
             return res.status(400).json({ error: 'Missing customerAddress or product.size in request body.' });
