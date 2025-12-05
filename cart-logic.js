@@ -130,15 +130,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---- CHECKOUT ----
-// Replace direct Stripe checkout with redirect to checkout.html
-if (checkoutButton) {
-    checkoutButton.addEventListener('click', () => {
-        if (!cart.length) return;
+    checkoutButton.addEventListener('click', async () => {
+        try {
+            checkoutButton.textContent = "Processing...";
+            checkoutButton.disabled = true;
 
-        // Save the latest cart before leaving the page
-        saveCart();
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cart })
+            });
 
-        // Go to shipping information page
-        window.location.href = "checkout.html";
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Server error:", text);
+                alert("Checkout failed: " + text);
+                checkoutButton.textContent = "Proceed to Checkout";
+                checkoutButton.disabled = false;
+                return;
+            }
+
+            const data = await response.json();
+            if (data?.url) {
+                window.location.href = data.url;
+            } else {
+                alert("Checkout failed: No URL returned.");
+                checkoutButton.textContent = "Proceed to Checkout";
+                checkoutButton.disabled = false;
+            }
+
+        } catch (err) {
+            console.error("Checkout error:", err);
+            alert("Checkout crashed. Check console.");
+            checkoutButton.textContent = "Proceed to Checkout";
+            checkoutButton.disabled = false;
+        }
     });
-}
+});
