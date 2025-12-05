@@ -7,6 +7,99 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
+    <script>
+let selectedRate = null;
+let shippingData = null;
+
+// When the shipping form is submitted:
+document.getElementById("shippingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Collect address
+    shippingData = {
+        street1: document.getElementById("street1").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        state: document.getElementById("state").value.trim(),
+        zip: document.getElementById("zip").value.trim(),
+        country: document.getElementById("country").value.trim(),
+    };
+
+    // Load cart from storage
+    const cart = JSON.parse(localStorage.getItem("bb_cart_items") || "[]");
+    if (!cart.length) {
+        alert("Your cart is empty.");
+        return;
+    }
+
+    // Request rates
+    const res = await fetch("/api/get-shipping-rates", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ address: shippingData, cart })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert("Could not calculate shipping: " + data.error);
+        return;
+    }
+
+    // Show rate options
+    const list = document.getElementById("ratesList");
+    list.innerHTML = "";
+    document.getElementById("ratesContainer").style.display = "block";
+
+    data.rates.forEach((rate, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = `${rate.carrier} ${rate.service} — $${rate.rate}`;
+        btn.className = "btn";
+        btn.style.display = "block";
+        btn.style.margin = "10px 0";
+
+        btn.onclick = () => {
+            selectedRate = rate;
+            document.getElementById("continueToPayment").style.display = "block";
+
+            // Highlight selection
+            [...list.children].forEach(el => el.style.background = "");
+            btn.style.background = "#d6ffd6";
+        };
+
+        list.appendChild(btn);
+    });
+});
+
+// When the user chooses a rate and wants to pay:
+document.getElementById("continueToPayment").addEventListener("click", async () => {
+    if (!selectedRate || !shippingData) {
+        alert("Please select a shipping method.");
+        return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem("bb_cart_items") || "[]");
+
+    const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            cart,
+            shippingRate: selectedRate,
+            address: shippingData
+        })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert("Checkout error: " + data.error);
+        return;
+    }
+
+    window.location.href = data.url; // send to Stripe
+});
+</script>
+
 <body>
     <div class="container" style="max-width:480px;margin:40px auto;">
         <h2>Shipping Information</h2>
