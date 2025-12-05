@@ -1,4 +1,5 @@
 // File: cart-logic.js
+// Matches current shop.html IDs and class names
 
 document.addEventListener('DOMContentLoaded', () => {
     // ---- DOM ELEMENTS ----
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartSubtotalEl   = document.getElementById('cart-subtotal');
     const checkoutButton   = document.getElementById('checkout-button');
     const cartCountPill    = document.getElementById('cart-count-pill');
+
     const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
 
     const STORAGE_KEY = 'bb_cart_items';
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cartOverlay) cartOverlay.style.display = 'block';
         if (cartSidebar) cartSidebar.style.right = '0';
     }
+
     function closeCart() {
         if (cartOverlay) cartOverlay.style.display = 'none';
         if (cartSidebar) cartSidebar.style.right = '-420px';
@@ -44,7 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveCart() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        } catch {}
     }
 
     // ---- ADD TO CART ----
@@ -83,6 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- RENDER CART ----
     function renderCart() {
+        if (!cartItemsContainer || !cartSubtotalEl || !cartCountPill) return;
+
         cartItemsContainer.innerHTML = '';
 
         if (cart.length === 0) {
@@ -91,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cart.forEach((item, index) => {
                 const row = document.createElement('div');
                 row.className = 'cart-item';
-
                 row.innerHTML = `
                     <img src="${item.img}" alt="">
                     <div class="cart-item-info">
@@ -102,7 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                row.querySelector('.cart-item-remove').addEventListener('click', () => {
+                const removeBtn = row.querySelector('.cart-item-remove');
+                removeBtn.addEventListener('click', () => {
                     cart.splice(index, 1);
                     renderCart();
                 });
@@ -117,55 +124,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
         cartCountPill.textContent = totalItems;
 
-        checkoutButton.disabled = cart.length === 0;
+        if (checkoutButton) {
+            checkoutButton.disabled = cart.length === 0;
+        }
 
         saveCart();
     }
 
     function calculateSubtotal() {
         return cart.reduce((acc, item) => {
-            const priceNum = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+            const priceNum = parseFloat(
+                String(item.price).replace(/[^0-9.]/g, '')
+            ) || 0;
             return acc + priceNum * item.quantity;
         }, 0);
     }
 
-    // ---- CHECKOUT ----
-    checkoutButton.addEventListener('click', async () => {
-        try {
-            checkoutButton.textContent = "Processing...";
-            checkoutButton.disabled = true;
+    // ------------------------------------------------------------
+    // ✅ FIXED CHECKOUT — SEND CART TO YOUR API
+    // ------------------------------------------------------------
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cart })
+                });
 
-            const response = await fetch('/api/create-checkout-session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ cart })
-            });
+                const data = await response.json();
 
-            if (!response.ok) {
-                const text = await response.text();
-                console.error("Server error:", text);
-                alert("Checkout failed: " + text);
-                checkoutButton.textContent = "Proceed to Checkout";
-                checkoutButton.disabled = false;
-                return;
-            }
+                if (!response.ok) {
+                    alert(`Checkout Error: ${data.error || 'Unknown error'}`);
+                    return;
+                }
 
-            const data = await response.json();
-            if (data?.url) {
+                // Redirect to Stripe Checkout
                 window.location.href = data.url;
-            } else {
-                alert("Checkout failed: No URL returned.");
-                checkoutButton.textContent = "Proceed to Checkout";
-                checkoutButton.disabled = false;
-            }
 
-        } catch (err) {
-            console.error("Checkout error:", err);
-            alert("Checkout crashed. Check console.");
-            checkoutButton.textContent = "Proceed to Checkout";
-            checkoutButton.disabled = false;
-        }
-    });
+            } catch (err) {
+                alert('Checkout Failed: ' + err.message);
+            }
+        });
+    }
 });
