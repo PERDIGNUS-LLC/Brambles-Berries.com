@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Brambles & Berries static site with API handlers",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "",
     "start": ""
