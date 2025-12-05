@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout – Brambles & Berries</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container" style="max-width:480px;margin:40px auto;">
+        <h2>Shipping Information</h2>
+        <p>Please enter your shipping address so we can calculate the exact shipping cost.</p>
+
+        <form id="shippingForm">
+            <label>Street Address</label>
+            <input type="text" id="street1" required />
+
+            <label>City</label>
+            <input type="text" id="city" required />
+
+            <label>State</label>
+            <input type="text" id="state" required />
+
+            <label>ZIP Code</label>
+            <input type="text" id="zip" required />
+
+            <label>Country</label>
+            <input type="text" id="country" value="US" required />
+
+            <button class="btn" type="submit" style="margin-top:20px;">
+                Get Shipping Rates
+            </button>
+        </form>
+
+        <div id="ratesContainer" style="margin-top:30px; display:none;">
+            <h3>Select a Shipping Method</h3>
+            <div id="ratesList"></div>
+        </div>
+
+        <button id="continueToPayment" class="btn"
+            style="width:100%;margin-top:20px;display:none;">
+            Continue to Payment
+        </button>
+    </div>
+
+    <script src="cart-logic.js"></script>
+</body>
+</html>
