@@ -1,9 +1,11 @@
 {
   "name": "brambles-berries",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "engines": {
-    "node": "20.x"
-  }
+  "description": "Brambles & Berries static site with API handlers",
+  "main": "index.js",
+  "scripts": {
+    "build": "",
+    "start": ""
+  },
+  "license": "MIT"
 }
