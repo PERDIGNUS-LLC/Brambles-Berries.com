@@ -57,7 +57,7 @@ export default async function handler(req, res) {
             phone: '6167196346'
         };
 
-        const response = await fetch('https://api.easypost.com/v1/shipments', {
+        const response = await fetch('https://api.easypost.com/v2/shipments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
