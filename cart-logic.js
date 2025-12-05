@@ -141,32 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ------------------------------------------------------------
-    // ✅ FIXED CHECKOUT — SEND CART TO YOUR API
+    // ✅ CHECKOUT — send user to checkout.html (shipping flow)
     // ------------------------------------------------------------
     if (checkoutButton) {
-        checkoutButton.addEventListener('click', async () => {
-            try {
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ cart })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    alert(`Checkout Error: ${data.error || 'Unknown error'}`);
-                    return;
-                }
-
-                // Redirect to Stripe Checkout
-                window.location.href = data.url;
-
-            } catch (err) {
-                alert('Checkout Failed: ' + err.message);
-            }
+        checkoutButton.addEventListener('click', () => {
+            // Cart is already in localStorage (bb_cart_items)
+            // The checkout.html page will read it, collect shipping, then call Stripe.
+            window.location.href = 'checkout.html';
         });
     }
 });
