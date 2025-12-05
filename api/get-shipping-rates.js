@@ -1,3 +1,5 @@
+console.log("🔥 get-shipping-rates.js EXECUTED");
+
 export const config = {
     runtime: "nodejs"
 };
