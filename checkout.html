@@ -29,7 +29,6 @@
             />
 
             <label>State</label>
-            <!-- We will normalize this to a 2-letter code before sending -->
             <input
                 type="text"
                 id="state"
@@ -70,62 +69,20 @@
         </button>
     </div>
 
-    <!-- your existing cart sidebar logic -->
     <script src="cart-logic.js"></script>
 
     <script>
-    // Map full state names to 2-letter codes for EasyPost
     const US_STATE_ABBREVS = {
-        "ALABAMA": "AL",
-        "ALASKA": "AK",
-        "ARIZONA": "AZ",
-        "ARKANSAS": "AR",
-        "CALIFORNIA": "CA",
-        "COLORADO": "CO",
-        "CONNECTICUT": "CT",
-        "DELAWARE": "DE",
-        "FLORIDA": "FL",
-        "GEORGIA": "GA",
-        "HAWAII": "HI",
-        "IDAHO": "ID",
-        "ILLINOIS": "IL",
-        "INDIANA": "IN",
-        "IOWA": "IA",
-        "KANSAS": "KS",
-        "KENTUCKY": "KY",
-        "LOUISIANA": "LA",
-        "MAINE": "ME",
-        "MARYLAND": "MD",
-        "MASSACHUSETTS": "MA",
-        "MICHIGAN": "MI",
-        "MINNESOTA": "MN",
-        "MISSISSIPPI": "MS",
-        "MISSOURI": "MO",
-        "MONTANA": "MT",
-        "NEBRASKA": "NE",
-        "NEVADA": "NV",
-        "NEW HAMPSHIRE": "NH",
-        "NEW JERSEY": "NJ",
-        "NEW MEXICO": "NM",
-        "NEW YORK": "NY",
-        "NORTH CAROLINA": "NC",
-        "NORTH DAKOTA": "ND",
-        "OHIO": "OH",
-        "OKLAHOMA": "OK",
-        "OREGON": "OR",
-        "PENNSYLVANIA": "PA",
-        "RHODE ISLAND": "RI",
-        "SOUTH CAROLINA": "SC",
-        "SOUTH DAKOTA": "SD",
-        "TENNESSEE": "TN",
-        "TEXAS": "TX",
-        "UTAH": "UT",
-        "VERMONT": "VT",
-        "VIRGINIA": "VA",
-        "WASHINGTON": "WA",
-        "WEST VIRGINIA": "WV",
-        "WISCONSIN": "WI",
-        "WYOMING": "WY"
+        "ALABAMA": "AL","ALASKA": "AK","ARIZONA": "AZ","ARKANSAS": "AR","CALIFORNIA": "CA",
+        "COLORADO": "CO","CONNECTICUT": "CT","DELAWARE": "DE","FLORIDA": "FL","GEORGIA": "GA",
+        "HAWAII": "HI","IDAHO": "ID","ILLINOIS": "IL","INDIANA": "IN","IOWA": "IA",
+        "KANSAS": "KS","KENTUCKY": "KY","LOUISIANA": "LA","MAINE": "ME","MARYLAND": "MD",
+        "MASSACHUSETTS": "MA","MICHIGAN": "MI","MINNESOTA": "MN","MISSISSIPPI": "MS","MISSOURI": "MO",
+        "MONTANA": "MT","NEBRASKA": "NE","NEVADA": "NV","NEW HAMPSHIRE": "NH","NEW JERSEY": "NJ",
+        "NEW MEXICO": "NM","NEW YORK": "NY","NORTH CAROLINA": "NC","NORTH DAKOTA": "ND","OHIO": "OH",
+        "OKLAHOMA": "OK","OREGON": "OR","PENNSYLVANIA": "PA","RHODE ISLAND": "RI","SOUTH CAROLINA": "SC",
+        "SOUTH DAKOTA": "SD","TENNESSEE": "TN","TEXAS": "TX","UTAH": "UT","VERMONT": "VT",
+        "VIRGINIA": "VA","WASHINGTON": "WA","WEST VIRGINIA": "WV","WISCONSIN": "WI","WYOMING": "WY"
     };
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -137,7 +94,6 @@
         const ratesList      = document.getElementById("ratesList");
         const continueBtn    = document.getElementById("continueToPayment");
 
-        // Normalize address for EasyPost
         function buildAndNormalizeAddress() {
             let street  = document.getElementById("street1").value.trim();
             let city    = document.getElementById("city").value.trim();
@@ -145,18 +101,14 @@
             let zip     = document.getElementById("zip").value.trim();
             let country = document.getElementById("country").value.trim();
 
-            // Normalize state → 2-letter abbreviation if full name given
             let upperState = state.toUpperCase();
-            if (upperState.length > 2) {
-                if (US_STATE_ABBREVS[upperState]) {
-                    upperState = US_STATE_ABBREVS[upperState];
-                }
+            if (upperState.length > 2 && US_STATE_ABBREVS[upperState]) {
+                upperState = US_STATE_ABBREVS[upperState];
             }
-            // Normalize country → US
+
             let upperCountry = country.toUpperCase();
-            if (upperCountry === "UNITED STATES" || upperCountry === "UNITED STATES OF AMERICA" || upperCountry === "USA") {
+            if (upperCountry === "UNITED STATES" || upperCountry === "USA")
                 upperCountry = "US";
-            }
 
             return {
                 street1: street,
@@ -167,14 +119,12 @@
             };
         }
 
-        // When the shipping form is submitted:
         if (shippingForm) {
             shippingForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
                 shippingData = buildAndNormalizeAddress();
 
-                // Quick sanity check: US & 5-digit zip
                 if (!/^\d{5}(-\d{4})?$/.test(shippingData.zip)) {
                     alert("Please enter a valid ZIP code.");
                     return;
@@ -190,8 +140,8 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        customerAddress: shippingData,
-                        product: cart[0] // first item, for size-based shipping
+                        customerAddress: shippingData,   // ✔ CORRECT
+                        product: cart[0]                 // ✔ CORRECT
                     })
                 });
 
@@ -217,7 +167,6 @@
                     btn.onclick = () => {
                         selectedRate = rate;
                         continueBtn.style.display = "block";
-
                         [...ratesList.children].forEach(el => el.style.background = "");
                         btn.style.background = "#d6ffd6";
                     };
@@ -227,7 +176,6 @@
             });
         }
 
-        // When the user chooses a rate and wants to pay:
         if (continueBtn) {
             continueBtn.addEventListener("click", async () => {
                 if (!selectedRate || !shippingData) {
@@ -254,7 +202,7 @@
                     return;
                 }
 
-                window.location.href = data.url; // send to Stripe
+                window.location.href = data.url;
             });
         }
     });
