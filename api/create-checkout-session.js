@@ -1,71 +1,57 @@
-// File: api/create-checkout-session.js
-
+// api/create-checkout-session.js
 import Stripe from 'stripe';
-
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET;
-if (!stripeSecretKey) {
-  console.error('❌ STRIPE_SECRET_KEY is not set in Environment Variables.');
-}
-
-// Create the Stripe client
-const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
-  // Vercel Serverless Function entrypoint
-
-  // Only allow POST
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  try {
-    if (!stripe) {
-      return res.status(500).json({
-        error: 'Stripe configuration error',
-        details: 'Missing STRIPE_SECRET_KEY environment variable.'
-      });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { items } = req.body || {};
+    try {
+        const { cartItems, shippingRate } = req.body;
 
-    if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({
-        error: 'No items provided',
-        details: 'Expected body: { items: [{ priceId, quantity }] }'
-      });
+        if (!cartItems || !Array.isArray(cartItems)) {
+            return res.status(400).json({ error: 'Invalid cart items' });
+        }
+
+        // Convert your cart into Stripe line items
+        const line_items = cartItems.map(item => ({
+            price: item.priceId,
+            quantity: item.quantity,
+        }));
+
+        // Create the checkout session
+        const session = await stripe.checkout.sessions.create({
+            mode: 'payment',
+
+            // REQUIRED to collect shipping address
+            shipping_address_collection: {
+                allowed_countries: ['US'],
+            },
+
+            // APPLY THE SHIPPING RATE RETURNED FROM YOUR EasyPost API
+            shipping_options: [
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: {
+                            amount: Math.round(shippingRate * 100), // USD → cents
+                            currency: 'usd',
+                        },
+                        display_name: 'Shipping',
+                    }
+                }
+            ],
+
+            line_items,
+            success_url: `${req.headers.origin}/success.html`,
+            cancel_url: `${req.headers.origin}/shop.html`,
+        });
+
+        return res.status(200).json({ url: session.url });
+
+    } catch (error) {
+        console.error("Stripe Checkout Error:", error);
+        return res.status(500).json({ error: error.message });
     }
-
-    // Convert cart items into Stripe line_items
-    const line_items = items.map((item) => {
-      if (!item.priceId) {
-        throw new Error('Cart item missing priceId');
-      }
-      return {
-        price: item.priceId,
-        quantity: item.quantity && item.quantity > 0 ? item.quantity : 1
-      };
-    });
-
-    const origin = req.headers.origin || 'https://bramblesandberries.com';
-
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items,
-      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/shop.html`,
-      billing_address_collection: 'required'
-    });
-
-    // ✅ Return JSON so the frontend can do data.url
-    return res.status(200).json({ url: session.url });
-  } catch (err) {
-    console.error('❌ Error in create-checkout-session:', err);
-
-    // Make absolutely sure we always return JSON, not HTML
-    return res.status(500).json({
-      error: 'Internal server error',
-      details: err.message || 'Unknown error'
-    });
-  }
 }
