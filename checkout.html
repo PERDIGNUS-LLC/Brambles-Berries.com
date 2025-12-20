@@ -5,126 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout – Brambles & Berries</title>
     <link rel="stylesheet" href="style.css" />
+    <style>
+        /* Modern, organized form layout */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4a5d23; /* Darker green for Brambles theme */
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Distinctive color for the final payment button */
+        #continueToPayment {
+            background-color: #2e7d32 !important; /* Bold Forest Green */
+            color: white;
+            font-weight: bold;
+            border: 2px solid #1b5e20;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #continueToPayment:hover {
+            background-color: #1b5e20 !important;
+        }
+
+        /* Adjust the general button style for visibility */
+        .btn {
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container" style="max-width:480px;margin:40px auto;">
-        <h2>Shipping Information</h2>
+    <div class="container" style="max-width:480px; margin:40px auto; padding: 20px; background: #fffcf5; border-radius: 8px;">
+        <h2 style="color: #4a5d23;">Shipping Information</h2>
         <p>Please enter your shipping address so we can calculate the exact shipping cost.</p>
 
         <form id="shippingForm" autocomplete="on">
-            <label>Street Address</label>
-            <input
-                type="text"
-                id="street1"
-                required
-                autocomplete="address-line1"
-            />
+            <div class="form-group">
+                <label for="street1">Street Address</label>
+                <input type="text" id="street1" required autocomplete="address-line1" />
+            </div>
 
-            <label>City</label>
-            <input
-                type="text"
-                id="city"
-                required
-                autocomplete="address-level2"
-            />
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" required autocomplete="address-level2" />
+            </div>
 
-            <label>State</label>
-            <input
-                type="text"
-                id="state"
-                required
-                autocomplete="address-level1"
-            />
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="state">State</label>
+                    <input type="text" id="state" required autocomplete="address-level1" />
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="zip">ZIP Code</label>
+                    <input type="text" id="zip" required autocomplete="postal-code" />
+                </div>
+            </div>
 
-            <label>ZIP Code</label>
-            <input
-                type="text"
-                id="zip"
-                required
-                autocomplete="postal-code"
-            />
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" value="US" required autocomplete="country" />
+            </div>
 
-            <label>Country</label>
-            <input
-                type="text"
-                id="country"
-                value="US"
-                required
-                autocomplete="country"
-            />
-
-            <button class="btn" type="submit" style="margin-top:20px;">
+            <button class="btn" type="submit" style="margin-top:10px; width: 100%;">
                 Get Shipping Rates
             </button>
         </form>
 
         <div id="ratesContainer" style="margin-top:30px; display:none;">
-            <h3>Select a Shipping Method</h3>
+            <h3 style="color: #4a5d23;">Select a Shipping Method</h3>
             <div id="ratesList"></div>
         </div>
 
-        <button id="continueToPayment" class="btn"
-            style="width:100%;margin-top:20px;display:none;">
+        <button id="continueToPayment" class="btn" style="width:100%; margin-top:20px; display:none;">
             Continue to Payment
         </button>
     </div>
 
-    <!-- your existing cart sidebar logic -->
     <script src="cart-logic.js"></script>
-
     <script>
-    // Map full state names to 2-letter codes for EasyPost
     const US_STATE_ABBREVS = {
-        "ALABAMA": "AL",
-        "ALASKA": "AK",
-        "ARIZONA": "AZ",
-        "ARKANSAS": "AR",
-        "CALIFORNIA": "CA",
-        "COLORADO": "CO",
-        "CONNECTICUT": "CT",
-        "DELAWARE": "DE",
-        "FLORIDA": "FL",
-        "GEORGIA": "GA",
-        "HAWAII": "HI",
-        "IDAHO": "ID",
-        "ILLINOIS": "IL",
-        "INDIANA": "IN",
-        "IOWA": "IA",
-        "KANSAS": "KS",
-        "KENTUCKY": "KY",
-        "LOUISIANA": "LA",
-        "MAINE": "ME",
-        "MARYLAND": "MD",
-        "MASSACHUSETTS": "MA",
-        "MICHIGAN": "MI",
-        "MINNESOTA": "MN",
-        "MISSISSIPPI": "MS",
-        "MISSOURI": "MO",
-        "MONTANA": "MT",
-        "NEBRASKA": "NE",
-        "NEVADA": "NV",
-        "NEW HAMPSHIRE": "NH",
-        "NEW JERSEY": "NJ",
-        "NEW MEXICO": "NM",
-        "NEW YORK": "NY",
-        "NORTH CAROLINA": "NC",
-        "NORTH DAKOTA": "ND",
-        "OHIO": "OH",
-        "OKLAHOMA": "OK",
-        "OREGON": "OR",
-        "PENNSYLVANIA": "PA",
-        "RHODE ISLAND": "RI",
-        "SOUTH CAROLINA": "SC",
-        "SOUTH DAKOTA": "SD",
-        "TENNESSEE": "TN",
-        "TEXAS": "TX",
-        "UTAH": "UT",
-        "VERMONT": "VT",
-        "VIRGINIA": "VA",
-        "WASHINGTON": "WA",
-        "WEST VIRGINIA": "WV",
-        "WISCONSIN": "WI",
-        "WYOMING": "WY"
+        "ALABAMA": "AL", "ALASKA": "AK", "ARIZONA": "AZ", "ARKANSAS": "AR", "CALIFORNIA": "CA",
+        "COLORADO": "CO", "CONNECTICUT": "CT", "DELAWARE": "DE", "FLORIDA": "FL", "GEORGIA": "GA",
+        "HAWAII": "HI", "IDAHO": "ID", "ILLINOIS": "IL", "INDIANA": "IN", "IOWA": "IA",
+        "KANSAS": "KS", "KENTUCKY": "KY", "LOUISIANA": "LA", "MAINE": "ME", "MARYLAND": "MD",
+        "MASSACHUSETTS": "MA", "MICHIGAN": "MI", "MINNESOTA": "MN", "MISSISSIPPI": "MS", "MISSOURI": "MO",
+        "MONTANA": "MT", "NEBRASKA": "NE", "NEVADA": "NV", "NEW HAMPSHIRE": "NH", "NEW JERSEY": "NJ",
+        "NEW MEXICO": "NM", "NEW YORK": "NY", "NORTH CAROLINA": "NC", "NORTH DAKOTA": "ND", "OHIO": "OH",
+        "OKLAHOMA": "OK", "OREGON": "OR", "PENNSYLVANIA": "PA", "RHODE ISLAND": "RI", "SOUTH CAROLINA": "SC",
+        "SOUTH DAKOTA": "SD", "TENNESSEE": "TN", "TEXAS": "TX", "UTAH": "UT", "VERMONT": "VT",
+        "VIRGINIA": "VA", "WASHINGTON": "WA", "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY"
     };
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -136,7 +120,6 @@
         const ratesList      = document.getElementById("ratesList");
         const continueBtn    = document.getElementById("continueToPayment");
 
-        // Normalize address for EasyPost
         function buildAndNormalizeAddress() {
             let street  = document.getElementById("street1").value.trim();
             let city    = document.getElementById("city").value.trim();
@@ -144,35 +127,24 @@
             let zip     = document.getElementById("zip").value.trim();
             let country = document.getElementById("country").value.trim();
 
-            // Normalize state → 2-letter abbreviation if full name given
             let upperState = state.toUpperCase();
             if (upperState.length > 2 && US_STATE_ABBREVS[upperState]) {
                 upperState = US_STATE_ABBREVS[upperState];
             }
 
-            // Normalize country → US
             let upperCountry = country.toUpperCase();
-            if (upperCountry === "UNITED STATES" || upperCountry === "UNITED STATES OF AMERICA" || upperCountry === "USA") {
+            if (["UNITED STATES", "UNITED STATES OF AMERICA", "USA"].includes(upperCountry)) {
                 upperCountry = "US";
             }
 
-            return {
-                street1: street,
-                city,
-                state: upperState,
-                zip,
-                country: upperCountry || "US"
-            };
+            return { street1: street, city, state: upperState, zip, country: upperCountry || "US" };
         }
 
-        // When the shipping form is submitted:
         if (shippingForm) {
             shippingForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
-
                 shippingData = buildAndNormalizeAddress();
 
-                // Quick sanity check: US & 5-digit zip
                 if (!/^\d{5}(-\d{4})?$/.test(shippingData.zip)) {
                     alert("Please enter a valid ZIP code.");
                     return;
@@ -184,8 +156,6 @@
                     return;
                 }
 
-                // 🔥 Determine shipping profile from cart:
-                // If ANY large stool is in the cart → use L, otherwise S.
                 const largestSize = cart.some(i => i.size === "L") ? "L" : "S";
 
                 const res = await fetch("/api/get-shipping-rates", {
@@ -193,19 +163,17 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         customerAddress: shippingData,
-                        product: { size: largestSize } // ✅ send clean size only
+                        product: { size: largestSize }
                     })
                 });
 
                 const data = await res.json();
-
                 if (!res.ok) {
                     alert("Could not calculate shipping: " + (data.error || "Unknown error"));
                     return;
                 }
 
                 const rates = Array.isArray(data) ? data : [];
-
                 ratesList.innerHTML = "";
                 ratesContainer.style.display = "block";
 
@@ -214,22 +182,20 @@
                     btn.textContent = `${rate.carrier} ${rate.service} — $${rate.rate}`;
                     btn.className = "btn";
                     btn.style.display = "block";
+                    btn.style.width = "100%";
                     btn.style.margin = "10px 0";
 
                     btn.onclick = () => {
                         selectedRate = rate;
                         continueBtn.style.display = "block";
-
                         [...ratesList.children].forEach(el => el.style.background = "");
                         btn.style.background = "#d6ffd6";
                     };
-
                     ratesList.appendChild(btn);
                 });
             });
         }
 
-        // When the user chooses a rate and wants to pay:
         if (continueBtn) {
             continueBtn.addEventListener("click", async () => {
                 if (!selectedRate || !shippingData) {
@@ -238,7 +204,6 @@
                 }
 
                 const cart = JSON.parse(localStorage.getItem("bb_cart_items") || "[]");
-
                 const res = await fetch("/api/create-checkout-session", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -250,13 +215,11 @@
                 });
 
                 const data = await res.json();
-
                 if (!res.ok) {
                     alert("Checkout error: " + (data.error || "Unknown error"));
                     return;
                 }
-
-                window.location.href = data.url; // send to Stripe
+                window.location.href = data.url;
             });
         }
     });
