@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "tangerine.png", label: "Tangerine" },
       { file: "raspberry.png", label: "Raspberry" },
       { file: "succulent.png", label: "Succulent" },
+      { file: "Sun.png", label: "Sun" },
       { file: "cactus.png", label: "Cactus" }
     ],
     eyes: [
