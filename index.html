@@ -82,24 +82,23 @@
         </div>
 </section>
 
-<script src="products.js"></script>
-<script>
-    const grid = document.getElementById('newMembersGrid');
-    const newArrivals = PRODUCTS.filter(p => p.isNewMember);
-
-    grid.innerHTML = newArrivals.map(p => `
+<section class="container" style="margin-top: 60px; text-align: center;">
+    <h2 style="color: #4a5d23;">New Member of the Collection</h2>
+    <p style="color: #666; margin-bottom: 40px;">A first look at our latest handcrafted design.</p>
+    
+    <div class="product-grid" style="display: flex; justify-content: center;">
         <div class="product-card" style="max-width: 350px;">
-            <img src="${p.image}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <p class="price">${p.price === 'Coming Soon' ? p.price : '$' + p.price}</p>
+            <img src="images/product-summer-sun.jpg" alt="New Arrival Stool">
             
-            ${p.isAvailable 
-                ? `<button class="add-to-cart-button btn">Add to Cart</button>` 
-                : `<button class="btn" style="background: #ccc; cursor: default;" disabled>Coming Soon</button>`
-            }
+            <h3>Summer Sun Stool</h3>
+            <p class="price">Coming Soon</p>
+            
+            <button class="btn" style="background: #ccc; cursor: default;" disabled>
+                Coming Soon
+            </button>
         </div>
-    `).join('');
-</script>
+    </div>
+</section>
     <footer class="main-footer">
         <div class="container">
             <div class="footer-vine">
