@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         }
 
         const shippingProfiles = {
-            S: { weight: 56.5, length: 14, width: 14, height: 2 },
+            S: { weight: 56.5, length: 18, width: 12, height: 2 },
             L: { weight: 115.5, length: 18, width: 12, height: 2 }
         };
 
