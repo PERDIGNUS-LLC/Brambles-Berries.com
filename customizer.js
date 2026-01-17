@@ -8,24 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
     eyes: document.getElementById("eyes-selector"),
     mouth: document.getElementById("mouth-selector")
   };
-const uploadInput = document.getElementById("upload-base");
 
-let uploadedBaseDataUrl = null;
-
-uploadInput?.addEventListener("change", (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    uploadedBaseDataUrl = reader.result;
-    baseImage.src = uploadedBaseDataUrl;
-
-    // Mark this as a custom uploaded base
-    config.base = "USER_UPLOAD";
-  };
-  reader.readAsDataURL(file);
-});
+  const uploadInput = document.getElementById("upload-base");
 
   const config = {
     base: "watermelon.png",
@@ -34,6 +18,27 @@ uploadInput?.addEventListener("change", (e) => {
     qty: 1
   };
 
+  let uploadedBaseDataUrl = null;
+
+  /* =========================
+     IMAGE UPLOAD (CUSTOM BASE)
+     ========================= */
+  uploadInput?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      uploadedBaseDataUrl = reader.result;
+      baseImage.src = uploadedBaseDataUrl;
+      config.base = "USER_UPLOAD";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* =========================
+     OPTIONS
+     ========================= */
   const options = {
     base: [
       { file: "watermelon.png", label: "Watermelon" },
@@ -63,6 +68,34 @@ uploadInput?.addEventListener("change", (e) => {
     ]
   };
 
+  /* =========================
+     CAPTURE MOCKUP IMAGE
+     ========================= */
+  function captureMockup() {
+    const canvas = document.createElement("canvas");
+    const preview = document.querySelector(".preview");
+
+    const rect = preview.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    const ctx = canvas.getContext("2d");
+
+    const drawImage = (img) => {
+      if (!img || img.style.display === "none") return;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+
+    drawImage(baseImage);
+    drawImage(eyesImage);
+    drawImage(mouthImage);
+
+    return canvas.toDataURL("image/png");
+  }
+
+  /* =========================
+     SKU / TITLE HELPERS
+     ========================= */
   function skuToken(str) {
     if (!str) return "NONE";
     return String(str)
@@ -74,20 +107,28 @@ uploadInput?.addEventListener("change", (e) => {
   }
 
   function buildIdentifiers(cfg) {
-    const baseToken = skuToken(cfg.base || "BASE");
+    const baseToken =
+      cfg.base === "USER_UPLOAD" ? "CUSTOM" : skuToken(cfg.base);
     const eyesToken = skuToken(cfg.eyes);
     const mouthToken = skuToken(cfg.mouth);
 
     const sku = `B&B-${baseToken}-${eyesToken}-${mouthToken}`;
     const humanTitle = [
-      cfg.base ? cfg.base.replace(/\.[^/.]+$/, "").replace(/-/g, " ") : "Custom Base",
+      cfg.base === "USER_UPLOAD"
+        ? "Custom Uploaded Base"
+        : cfg.base.replace(/\.[^/.]+$/, "").replace(/-/g, " "),
       cfg.eyes ? `• Eyes: ${cfg.eyes.replace(/\.[^/.]+$/, "")}` : "",
       cfg.mouth ? `• Mouth: ${cfg.mouth.replace(/\.[^/.]+$/, "")}` : ""
-    ].filter(Boolean).join(" ");
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return { sku, humanTitle };
   }
 
+  /* =========================
+     CART STORAGE
+     ========================= */
   function saveToLocalCart(item) {
     const CART_KEY = "bb_custom_cart_v1";
     const raw = localStorage.getItem(CART_KEY);
@@ -97,10 +138,13 @@ uploadInput?.addEventListener("change", (e) => {
     return cart;
   }
 
+  /* =========================
+     SELECTOR POPULATION
+     ========================= */
   function populateSelector(type, targetElement) {
     const folder = type === "base" ? "bases" : type;
 
-    options[type].forEach(opt => {
+    options[type].forEach((opt) => {
       const img = document.createElement("img");
       img.src = opt.file
         ? `images/customizer/${folder}/${opt.file}`
@@ -109,12 +153,15 @@ uploadInput?.addEventListener("change", (e) => {
       img.title = opt.label;
 
       img.addEventListener("click", () => {
-        [...targetElement.children].forEach(c => c.classList.remove("selected"));
+        [...targetElement.children].forEach((c) =>
+          c.classList.remove("selected")
+        );
         img.classList.add("selected");
 
         config[type] = opt.file;
 
         if (type === "base") {
+          uploadedBaseDataUrl = null;
           baseImage.src = `images/customizer/${folder}/${opt.file}`;
         } else if (type === "eyes") {
           if (opt.file) {
@@ -145,9 +192,14 @@ uploadInput?.addEventListener("change", (e) => {
   populateSelector("eyes", selectors.eyes);
   populateSelector("mouth", selectors.mouth);
 
+  /* =========================
+     ADD TO CART
+     ========================= */
   document.getElementById("add-to-cart").addEventListener("click", () => {
     const { sku, humanTitle } = buildIdentifiers(config);
     const priceCents = 3500;
+
+    const mockupImage = captureMockup();
 
     const item = {
       sku,
@@ -156,12 +208,17 @@ uploadInput?.addEventListener("change", (e) => {
       eyes: config.eyes,
       mouth: config.mouth,
       qty: config.qty,
-      unit_price_cents: priceCents
+      unit_price_cents: priceCents,
+
+      // ⭐ NEW
+      mockupImage,
+      isCustomUpload: config.base === "USER_UPLOAD"
     };
 
     const cart = saveToLocalCart(item);
+
     console.log("Cart now:", cart);
-    alert(`Added to cart: ${sku} — ${humanTitle}`);
+    alert(`Added to cart:\n${humanTitle}`);
     document.getElementById("mini-cart").innerText = `Cart items: ${cart.length}`;
   });
 
