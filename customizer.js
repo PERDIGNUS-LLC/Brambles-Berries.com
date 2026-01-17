@@ -8,6 +8,24 @@ document.addEventListener("DOMContentLoaded", () => {
     eyes: document.getElementById("eyes-selector"),
     mouth: document.getElementById("mouth-selector")
   };
+const uploadInput = document.getElementById("upload-base");
+
+let uploadedBaseDataUrl = null;
+
+uploadInput?.addEventListener("change", (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    uploadedBaseDataUrl = reader.result;
+    baseImage.src = uploadedBaseDataUrl;
+
+    // Mark this as a custom uploaded base
+    config.base = "USER_UPLOAD";
+  };
+  reader.readAsDataURL(file);
+});
 
   const config = {
     base: "watermelon.png",
