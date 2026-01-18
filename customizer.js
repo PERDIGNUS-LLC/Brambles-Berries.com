@@ -252,7 +252,10 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "eyes5.png", label: "Eyes 5" },
       { file: "eyes6.png", label: "Eyes 6" },
       { file: "eyes7.png", label: "Eyes 7" },
-      { file: "eyes8.png", label: "Eyes 8" }
+      { file: "eyes8.png", label: "Eyes 8" },
+      { file: "eyes9.png", label: "Eyes 9" },
+      { file: "eyes10.png", label: "Eyes 10" },
+      { file: "eyes11.png", label: "Eyes 11" }
     ],
     mouth: [
       { file: null, label: "None" },
