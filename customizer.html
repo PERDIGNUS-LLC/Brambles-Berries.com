@@ -1,89 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brambles & Berries Customizer</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <header class="main-header">
     <div class="container">
-      <img class="logo-image" src="images/logo.png" alt="Brambles & Berries Logo">
+      <a href="index.html" class="logo-link">
+        <img class="logo-image" src="images/logo.png" alt="Brambles & Berries Logo">
+      </a>
+
       <nav class="main-nav">
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="customizer.html" class="active">Customizer</a></li>
+
+          <!-- ✅ Real cart button (same IDs as shop.html + cart-logic.js) -->
+          <li class="cart-nav-item">
+            <button id="open-cart" class="cart-button">
+              Cart <span id="cart-count-pill" class="cart-count">0</span>
+            </button>
+          </li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main>
-    <div id="customizer">
+    <div id="customizer" class="container">
 
       <!-- LEFT: Preview -->
       <div class="preview">
-        <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
-        <img id="eyes-image" src="images/customizer/eyes/eyes1.png" alt="Eyes" style="display:none">
-        <img id="mouth-image" src="images/customizer/mouth/mouth1.png" alt="Mouth" style="display:none">
+        <div class="preview-stage">
+          <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
+          <img id="eyes-image" src="" alt="Eyes" style="display:none">
+          <img id="mouth-image" src="" alt="Mouth" style="display:none">
+        </div>
 
-        <button id="add-to-cart">Add to Cart</button>
+        <button id="add-to-cart" class="btn addcart-primary">Add to Cart</button>
       </div>
 
-      <!-- MIDDLE: Selectors -->
-      <div class="selectors">
-        <div class="customizer-section">
-          <h3>Base</h3>
-          <div id="base-selector" class="selector-grid"></div>
-        </div>
+      <!-- RIGHT: Selectors + Upload panel -->
+      <div class="right-panel">
+        <div class="selectors">
+          <div class="customizer-section">
+            <h3>Base</h3>
+            <div id="base-selector" class="selector-grid"></div>
+          </div>
 
-        <div class="customizer-section">
-          <h3>Eyes</h3>
-          <div id="eyes-selector" class="selector-grid"></div>
-        </div>
+          <div class="customizer-section">
+            <h3>Eyes</h3>
+            <div id="eyes-selector" class="selector-grid"></div>
+          </div>
 
-        <div class="customizer-section">
-          <h3>Mouth</h3>
-          <div id="mouth-selector" class="selector-grid"></div>
-        </div>
-      </div>
-
-      <!-- RIGHT (Desktop) / BOTTOM (Mobile): Upload Panel -->
-      <aside class="upload-panel" id="upload-panel">
-        <h3>Upload Your Stool<br>(Optional)</h3>
-
-        <input type="file" id="upload-base" accept="image/*">
-
-        <div class="upload-tools" id="upload-tools" style="display:none;">
-          <button type="button" id="base-reset">Reset Photo</button>
-
-          <div class="zoom-row">
-            <button type="button" id="base-zoom-out" aria-label="Zoom out">−</button>
-            <button type="button" id="base-zoom-in" aria-label="Zoom in">+</button>
+          <div class="customizer-section">
+            <h3>Mouth</h3>
+            <div id="mouth-selector" class="selector-grid"></div>
           </div>
         </div>
 
-        <p class="hint" id="upload-hint" style="display:none;">
-          Tip: drag the photo to position it.<br>
-          Scroll to zoom (desktop).
-        </p>
+        <!-- Upload panel (moves based on CSS for mobile/desktop) -->
+        <aside class="upload-panel">
+          <h3 class="upload-title">Upload Your Stool (Optional)</h3>
 
-        <p class="fineprint">
-          This photo is for reference only. Final product may vary.
-        </p>
+          <div id="upload-tools" class="upload-tools" style="display:none;">
+            <button id="base-reset" class="upload-tool-btn reset-btn" type="button">Reset Photo</button>
 
-        <div class="cart-status" id="cart-status"></div>
-        <button type="button" id="clear-cart" class="clear-cart">Clear Cart</button>
-      </aside>
+            <div class="zoom-group">
+              <button id="base-zoom-out" class="upload-tool-btn zoom-btn" type="button">−</button>
+              <button id="base-zoom-in" class="upload-tool-btn zoom-btn" type="button">+</button>
+            </div>
+          </div>
 
+          <p id="upload-hint" class="upload-hint" style="display:none;">
+            Tip: drag the photo to position it. Pinch (or scroll) to zoom.
+          </p>
+
+          <input
+            id="upload-base"
+            type="file"
+            accept="image/*"
+          />
+
+          <p class="upload-disclaimer">
+            This photo is for reference only. Final product may vary.
+          </p>
+        </aside>
+      </div>
     </div>
   </main>
 
   <footer class="main-footer">
-    <p>&copy; 2025 Brambles & Berries</p>
+    <div class="container">
+      <p>&copy; 2025 Brambles & Berries. All Rights Reserved.</p>
+      <p>Contact us at <a href="mailto:Bramblesandberries37@gmail.com">Bramblesandberries37@gmail.com</a></p>
+    </div>
   </footer>
 
+  <!-- ✅ Real cart overlay + sidebar (same as shop.html) -->
+  <div id="cart-overlay"></div>
+
+  <div id="cart-sidebar">
+    <header>
+      <h2>Your Cart</h2>
+      <button id="close-cart" aria-label="Close cart">&times;</button>
+    </header>
+
+    <div id="cart-items"></div>
+
+    <div class="cart-summary">
+      <div class="cart-summary-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0.00</span>
+      </div>
+      <button id="checkout-button" class="btn checkout-btn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <script src="cart-logic.js"></script>
   <script src="customizer.js"></script>
 </body>
 </html>
