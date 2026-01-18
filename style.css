@@ -553,3 +553,147 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     min-width: 240px;
   }
 }
+/* ============================
+   Customizer layout upgrades
+   ============================ */
+
+#customizer .preview-stage{
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 16px;
+}
+
+#customizer .preview-stage #base-image{
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+  touch-action: none; /* better dragging on mobile */
+  user-select: none;
+}
+
+#customizer .preview-stage #eyes-image,
+#customizer .preview-stage #mouth-image{
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Keep your existing % positions */
+#customizer .preview-stage #eyes-image { width: 20%; top: 30%; }
+#customizer .preview-stage #mouth-image { width: 10%; top: 35%; z-index: 3; }
+
+#customizer .right-panel{
+  display: flex;
+  flex-direction: column; /* mobile: selectors first, upload after */
+  gap: 18px;
+}
+
+/* Upload panel styling */
+.upload-panel{
+  background: rgba(254, 253, 239, 0.85);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.upload-title{
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.upload-tools{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px; /* ✅ pushes Reset away from +/- group */
+  margin-bottom: 8px;
+}
+
+.zoom-group{
+  display: inline-flex;
+  gap: 10px;
+}
+
+.upload-tool-btn{
+  border: 1px solid rgba(0,0,0,0.15);
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reset-btn{
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.zoom-btn{
+  width: 44px;          /* ✅ bigger buttons */
+  height: 44px;         /* ✅ bigger buttons */
+  font-size: 22px;      /* ✅ bigger symbols */
+  font-weight: 800;
+  line-height: 1;
+}
+
+.upload-hint{
+  text-align: center;
+  margin: 8px 0 10px;
+  font-size: 0.95rem;
+}
+
+.upload-disclaimer{
+  text-align: center;
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* Button modes */
+#add-to-cart.addcart-primary{
+  background-color: #af7de0ff;
+  border-radius: 50px;
+}
+
+#add-to-cart.quote-mode{
+  background-color: #B93751; /* primary red */
+  border-radius: 50px;
+}
+
+/* Desktop: preview left, selectors middle, upload right */
+@media (min-width: 901px){
+  #customizer{
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+  }
+
+  #customizer .preview{
+    flex: 1 1 55%;
+  }
+
+  #customizer .right-panel{
+    flex: 1 1 45%;
+    flex-direction: row;   /* ✅ selectors left, upload right */
+    gap: 18px;
+    max-height: 80vh;
+    overflow: hidden;
+  }
+
+  #customizer .selectors{
+    flex: 1 1 auto;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+
+  .upload-panel{
+    flex: 0 0 320px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
