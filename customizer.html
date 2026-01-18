@@ -21,33 +21,17 @@
 
   <main>
     <div id="customizer">
+
+      <!-- LEFT: Preview -->
       <div class="preview">
         <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
         <img id="eyes-image" src="images/customizer/eyes/eyes1.png" alt="Eyes" style="display:none">
         <img id="mouth-image" src="images/customizer/mouth/mouth1.png" alt="Mouth" style="display:none">
+
         <button id="add-to-cart">Add to Cart</button>
       </div>
 
-      <div class="customizer-section">
-  <h3>Upload Your Stool (Optional)</h3>
-  <input
-    type="file"
-    id="upload-base"
-    accept="image/*"
-      />
-  <p class="hint">
-    This photo is for reference only. Final product may vary.
-  </p>
-</div>
-<div class="upload-tools" id="upload-tools" style="display:none;">
-  <button type="button" id="base-reset">Reset Photo</button>
-  <button type="button" id="base-zoom-out">-</button>
-  <button type="button" id="base-zoom-in">+</button>
-</div>
-<p class="hint" id="upload-hint" style="display:none;">
-  Tip: drag the photo to position it. Pinch (or scroll) to zoom.
-</p>
-
+      <!-- MIDDLE: Selectors -->
       <div class="selectors">
         <div class="customizer-section">
           <h3>Base</h3>
@@ -65,7 +49,34 @@
         </div>
       </div>
 
-      
+      <!-- RIGHT (Desktop) / BOTTOM (Mobile): Upload Panel -->
+      <aside class="upload-panel" id="upload-panel">
+        <h3>Upload Your Stool<br>(Optional)</h3>
+
+        <input type="file" id="upload-base" accept="image/*">
+
+        <div class="upload-tools" id="upload-tools" style="display:none;">
+          <button type="button" id="base-reset">Reset Photo</button>
+
+          <div class="zoom-row">
+            <button type="button" id="base-zoom-out" aria-label="Zoom out">−</button>
+            <button type="button" id="base-zoom-in" aria-label="Zoom in">+</button>
+          </div>
+        </div>
+
+        <p class="hint" id="upload-hint" style="display:none;">
+          Tip: drag the photo to position it.<br>
+          Scroll to zoom (desktop).
+        </p>
+
+        <p class="fineprint">
+          This photo is for reference only. Final product may vary.
+        </p>
+
+        <div class="cart-status" id="cart-status"></div>
+        <button type="button" id="clear-cart" class="clear-cart">Clear Cart</button>
+      </aside>
+
     </div>
   </main>
 
@@ -74,11 +85,5 @@
   </footer>
 
   <script src="customizer.js"></script>
-  <div id="mini-cart"></div>
-  <script>
-    const cart = JSON.parse(localStorage.getItem("bb_custom_cart_v1") || "[]");
-    document.getElementById("mini-cart").innerText = `Cart items: ${cart.length}`;
-  </script>
-<script src="path/to/your/js/folder/cart-logic.js"></script>
-  </body>
+</body>
 </html>
