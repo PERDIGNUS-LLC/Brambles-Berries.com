@@ -425,3 +425,131 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     }
 
 }
+/* --- Customizer UX Fixes --- */
+
+/* Keep preview as clipping window for drag/zoom */
+#customizer .preview {
+  overflow: hidden;
+}
+
+/* Make uploaded image draggable/zoomable */
+#customizer #base-image {
+  transform-origin: center center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  cursor: grab;
+}
+
+#customizer #base-image.dragging {
+  cursor: grabbing;
+}
+
+/* Upload panel styling */
+.upload-panel {
+  background: transparent;
+  padding: 0;
+}
+
+.upload-panel h3 {
+  text-align: center;
+}
+
+.upload-panel input[type="file"] {
+  margin: 10px auto 15px;
+  display: block;
+}
+
+/* Reset button + zoom row spacing */
+.upload-tools {
+  margin-top: 10px;
+}
+
+#base-reset {
+  display: block;
+  margin: 0 auto 14px; /* more spacing away from +/- */
+  padding: 10px 14px;
+  font-size: 1rem;
+}
+
+.zoom-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+#base-zoom-in,
+#base-zoom-out {
+  width: 48px;      /* bigger */
+  height: 48px;     /* bigger */
+  font-size: 1.6rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.hint {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.fineprint {
+  text-align: center;
+  margin-top: 12px;
+  opacity: 0.85;
+}
+
+.cart-status {
+  text-align: center;
+  margin-top: 16px;
+  font-weight: 700;
+}
+
+.clear-cart {
+  display: block;
+  margin: 10px auto 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* =========================
+   LAYOUT FIXES
+   ========================= */
+
+/* MOBILE: preview -> selectors -> upload panel */
+@media (max-width: 900px) {
+  #customizer {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  #customizer .preview { order: 1; }
+  #customizer .selectors { order: 2; }
+  #customizer .upload-panel { order: 3; }
+}
+
+/* DESKTOP: preview | selectors | upload panel (right side) */
+@media (min-width: 901px) {
+  #customizer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 25px;
+    max-width: 1200px;
+  }
+
+  #customizer .preview {
+    flex: 1 1 58%;
+  }
+
+  #customizer .selectors {
+    flex: 1 1 28%;
+    max-width: 420px;
+  }
+
+  #customizer .upload-panel {
+    flex: 1 1 14%;
+    min-width: 240px;
+  }
+}
