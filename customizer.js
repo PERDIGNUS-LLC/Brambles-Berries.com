@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const eyesImage = document.getElementById("eyes-image");
   const mouthImage = document.getElementById("mouth-image");
 
+  const addBtn = document.getElementById("add-to-cart");
+  const cartStatus = document.getElementById("cart-status");
+  const clearCartBtn = document.getElementById("clear-cart");
+
   const selectors = {
     base: document.getElementById("base-selector"),
     eyes: document.getElementById("eyes-selector"),
@@ -13,13 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const uploadInput = document.getElementById("upload-base");
-
-  // Optional upload tool UI (only used if you added these elements in HTML)
   const uploadTools = document.getElementById("upload-tools");
   const uploadHint = document.getElementById("upload-hint");
   const btnReset = document.getElementById("base-reset");
   const btnZoomIn = document.getElementById("base-zoom-in");
   const btnZoomOut = document.getElementById("base-zoom-out");
+
+  // =========================
+  // STORAGE KEYS
+  // =========================
+  const CART_KEY = "bb_custom_cart_v1";
+  const QUOTE_KEY = "bb_quote_requests_v1";
 
   // =========================
   // STATE
@@ -39,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let baseScale = 1;
 
   function applyBaseTransform() {
-    // Only apply transforms for uploaded base. Otherwise clear.
     if (config.base !== "USER_UPLOAD") {
       baseImage.style.transform = "";
       return;
@@ -57,6 +64,42 @@ document.addEventListener("DOMContentLoaded", () => {
   function showUploadTools(show) {
     if (uploadTools) uploadTools.style.display = show ? "block" : "none";
     if (uploadHint) uploadHint.style.display = show ? "block" : "none";
+  }
+
+  function getCart() {
+    const raw = localStorage.getItem(CART_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  function setCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartStatus();
+  }
+
+  function getQuotes() {
+    const raw = localStorage.getItem(QUOTE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  function setQuotes(list) {
+    localStorage.setItem(QUOTE_KEY, JSON.stringify(list));
+  }
+
+  function updateCartStatus() {
+    if (!cartStatus) return;
+    const cart = getCart();
+    cartStatus.textContent = `Cart items: ${cart.length}`;
+  }
+
+  function setButtonMode() {
+    // USER_UPLOAD => quote mode
+    if (config.base === "USER_UPLOAD") {
+      addBtn.textContent = "Submit for Quotation";
+      addBtn.dataset.mode = "quote";
+    } else {
+      addBtn.textContent = "Add to Cart";
+      addBtn.dataset.mode = "cart";
+    }
   }
 
   // =========================
@@ -92,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // =========================
-  // IMAGE UPLOAD (CUSTOM BASE)
+  // UPLOAD (CUSTOM BASE)
   // =========================
   uploadInput?.addEventListener("change", (e) => {
     const file = e.target.files?.[0];
@@ -102,31 +145,31 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.onload = () => {
       uploadedBaseDataUrl = reader.result;
 
-      // Switch into "uploaded base" mode
       config.base = "USER_UPLOAD";
       baseImage.src = uploadedBaseDataUrl;
 
-      // Reset transform for a predictable starting point
       resetBaseTransform();
       showUploadTools(true);
+      setButtonMode();
     };
     reader.readAsDataURL(file);
   });
 
-  // =========================
-  // OPTIONAL TOOL BUTTONS
-  // =========================
-  btnReset?.addEventListener("click", resetBaseTransform);
+  // Tool buttons
+  btnReset?.addEventListener("click", () => {
+    if (config.base !== "USER_UPLOAD") return;
+    resetBaseTransform();
+  });
 
   btnZoomIn?.addEventListener("click", () => {
     if (config.base !== "USER_UPLOAD") return;
-    baseScale = Math.min(5, baseScale * 1.1);
+    baseScale = Math.min(5, baseScale * 1.15);
     applyBaseTransform();
   });
 
   btnZoomOut?.addEventListener("click", () => {
     if (config.base !== "USER_UPLOAD") return;
-    baseScale = Math.max(0.2, baseScale / 1.1);
+    baseScale = Math.max(0.2, baseScale / 1.15);
     applyBaseTransform();
   });
 
@@ -169,18 +212,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   baseImage.addEventListener("pointerup", stopDrag);
   baseImage.addEventListener("pointercancel", stopDrag);
-  baseImage.addEventListener("pointerleave", () => {
-    // If pointer leaves while dragging, stop safely
-    if (dragging) stopDrag();
-  });
 
-  // Desktop zoom (mouse wheel / trackpad)
   baseImage.addEventListener(
     "wheel",
     (e) => {
       if (config.base !== "USER_UPLOAD") return;
       e.preventDefault();
-
       const zoomFactor = e.deltaY < 0 ? 1.08 : 1 / 1.08;
       baseScale = Math.max(0.2, Math.min(5, baseScale * zoomFactor));
       applyBaseTransform();
@@ -189,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   // =========================
-  // CAPTURE MOCKUP IMAGE (RESPECTS BASE TRANSFORM)
+  // CAPTURE MOCKUP (RESPECT BASE TRANSFORM)
   // =========================
   function captureMockup() {
     const canvas = document.createElement("canvas");
@@ -201,23 +238,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ctx = canvas.getContext("2d");
 
-    // Helper: draw an image to cover the preview area (matches CSS "width:100% height:auto" feel)
-    function drawBaseCover(img) {
+    function drawBase(img) {
       if (!img || !img.complete) return;
 
       const iw = img.naturalWidth || img.width;
       const ih = img.naturalHeight || img.height;
       if (!iw || !ih) return;
 
-      // Your base-image is styled width:100%, height:auto inside the preview width
       const drawW = canvas.width;
       const drawH = (ih / iw) * drawW;
-
-      // Vertically center if taller than canvas (rare but possible)
       const x0 = 0;
       const y0 = (canvas.height - drawH) / 2;
 
-      // Apply translate/scale around center of the image drawing
       if (config.base === "USER_UPLOAD") {
         const cx = x0 + drawW / 2;
         const cy = y0 + drawH / 2;
@@ -237,9 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function drawOverlay(img) {
       if (!img || img.style.display === "none" || !img.complete) return;
 
-      // eyes/mouth are absolutely positioned with left:50% translateX(-50%)
-      // We will approximate by drawing them centered based on their rendered
-      // size relative to the preview. This matches your current UI.
       const computed = window.getComputedStyle(img);
       const topPx = parseFloat(computed.top || "0");
       const widthPx = parseFloat(computed.width || "0");
@@ -248,13 +277,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const h = (img.naturalHeight / img.naturalWidth) * w;
 
       const x = (canvas.width - w) / 2;
-      const y = topPx; // top is already relative to preview in px
+      const y = topPx;
 
       ctx.drawImage(img, x, y, w, h);
     }
 
-    // Base first, then overlays
-    drawBaseCover(baseImage);
+    drawBase(baseImage);
     drawOverlay(eyesImage);
     drawOverlay(mouthImage);
 
@@ -294,18 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =========================
-  // CART STORAGE
-  // =========================
-  function saveToLocalCart(item) {
-    const CART_KEY = "bb_custom_cart_v1";
-    const raw = localStorage.getItem(CART_KEY);
-    const cart = raw ? JSON.parse(raw) : [];
-    cart.push(item);
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    return cart;
-  }
-
-  // =========================
   // SELECTOR POPULATION
   // =========================
   function populateSelector(type, targetElement) {
@@ -326,21 +342,24 @@ document.addEventListener("DOMContentLoaded", () => {
         config[type] = opt.file;
 
         if (type === "base") {
-          // Switching back to stock bases
+          // switching to stock base cancels upload mode
           uploadedBaseDataUrl = null;
           baseImage.src = `images/customizer/${folder}/${opt.file}`;
-
-          // Disable upload transform mode
           showUploadTools(false);
-          applyBaseTransform(); // clears transform when not USER_UPLOAD
-        } else if (type === "eyes") {
+          applyBaseTransform();
+          setButtonMode();
+        }
+
+        if (type === "eyes") {
           if (opt.file) {
             eyesImage.src = `images/customizer/${folder}/${opt.file}`;
             eyesImage.style.display = "block";
           } else {
             eyesImage.style.display = "none";
           }
-        } else if (type === "mouth") {
+        }
+
+        if (type === "mouth") {
           if (opt.file) {
             mouthImage.src = `images/customizer/${folder}/${opt.file}`;
             mouthImage.style.display = "block";
@@ -362,18 +381,54 @@ document.addEventListener("DOMContentLoaded", () => {
   populateSelector("eyes", selectors.eyes);
   populateSelector("mouth", selectors.mouth);
 
-  // Hide upload tools by default
-  showUploadTools(false);
-
   // =========================
-  // ADD TO CART
+  // BUTTON ACTIONS
   // =========================
-  document.getElementById("add-to-cart").addEventListener("click", () => {
+  addBtn.addEventListener("click", async () => {
     const { sku, humanTitle } = buildIdentifiers(config);
-    const priceCents = 3500;
-
     const mockupImage = captureMockup();
 
+    // QUOTE MODE
+    if (addBtn.dataset.mode === "quote") {
+      const email = prompt("Enter your email so we can contact you with a quote:");
+      if (!email) return;
+
+      const note = prompt("Optional: describe your request (theme, colors, details):") || "";
+
+      const quoteRequest = {
+        createdAt: new Date().toISOString(),
+        email,
+        note,
+        sku,
+        title: humanTitle,
+        base: config.base,
+        eyes: config.eyes,
+        mouth: config.mouth,
+        mockupImage
+      };
+
+      const list = getQuotes();
+      list.push(quoteRequest);
+      setQuotes(list);
+
+      // Download the mockup automatically (so user can email it if needed)
+      const a = document.createElement("a");
+      a.href = mockupImage;
+      a.download = `bb-quote-${sku}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      alert(
+        "Quote request submitted!\n\n" +
+          "We downloaded your mockup image so you can share it if needed.\n" +
+          "Next step: we’ll review feasibility + price and email you back."
+      );
+
+      return;
+    }
+
+    // CART MODE (stock bases)
     const item = {
       sku,
       title: humanTitle,
@@ -381,20 +436,29 @@ document.addEventListener("DOMContentLoaded", () => {
       eyes: config.eyes,
       mouth: config.mouth,
       qty: config.qty,
-      unit_price_cents: priceCents,
-
-      // ⭐ NEW
+      unit_price_cents: 3500,
       mockupImage,
-      isCustomUpload: config.base === "USER_UPLOAD"
+      isCustomUpload: false
     };
 
-    const cart = saveToLocalCart(item);
+    const cart = getCart();
+    cart.push(item);
+    setCart(cart);
 
-    console.log("Cart now:", cart);
     alert(`Added to cart:\n${humanTitle}`);
-    const mini = document.getElementById("mini-cart");
-    if (mini) mini.innerText = `Cart items: ${cart.length}`;
   });
 
-  window._bb_customizer = { config, buildIdentifiers, saveToLocalCart };
+  clearCartBtn?.addEventListener("click", () => {
+    if (!confirm("Clear your customizer cart items?")) return;
+    setCart([]);
+  });
+
+  // =========================
+  // INIT UI
+  // =========================
+  showUploadTools(false);
+  updateCartStatus();
+  setButtonMode();
+
+  window._bb_customizer = { config };
 });
