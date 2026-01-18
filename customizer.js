@@ -1,52 +1,104 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // =========================
-  // DOM ELEMENTS
-  // =========================
   const baseImage = document.getElementById("base-image");
   const eyesImage = document.getElementById("eyes-image");
   const mouthImage = document.getElementById("mouth-image");
 
   const addBtn = document.getElementById("add-to-cart");
-  const cartStatus = document.getElementById("cart-status");
-  const clearCartBtn = document.getElementById("clear-cart");
 
   const selectors = {
     base: document.getElementById("base-selector"),
     eyes: document.getElementById("eyes-selector"),
-    mouth: document.getElementById("mouth-selector")
+    mouth: document.getElementById("mouth-selector"),
   };
 
   const uploadInput = document.getElementById("upload-base");
+
+  // Upload UI elements
   const uploadTools = document.getElementById("upload-tools");
   const uploadHint = document.getElementById("upload-hint");
   const btnReset = document.getElementById("base-reset");
   const btnZoomIn = document.getElementById("base-zoom-in");
   const btnZoomOut = document.getElementById("base-zoom-out");
 
-  // =========================
-  // STORAGE KEYS
-  // =========================
-  const CART_KEY = "bb_custom_cart_v1";
-  const QUOTE_KEY = "bb_quote_requests_v1";
+  // ✅ Use the SAME cart storage key as shop/cart-logic.js
+  const CART_KEY = "bb_cart_items";
 
-  // =========================
-  // STATE
-  // =========================
+  // -----------------------------
+  // Config state
+  // -----------------------------
   const config = {
     base: "watermelon.png",
     eyes: null,
     mouth: null,
-    qty: 1
+    qty: 1,
   };
 
   let uploadedBaseDataUrl = null;
 
-  // Uploaded-base transform state (only relevant when config.base === "USER_UPLOAD")
+  // -----------------------------
+  // Price mapping (Customizer base -> real shop Stripe priceId/size/price/name/img)
+  // -----------------------------
+  const BASE_PRODUCT_MAP = {
+    "watermelon.png": {
+      name: "Watermelon Stool (Small)",
+      price: "$40",
+      priceId: "price_1SBzJw7ywjQM5ca8ve87p3Io",
+      size: "S",
+      img: "images/product-watermelon.jpg",
+    },
+    "lemon.png": {
+      name: "Lemon Stool (Small)",
+      price: "$40",
+      priceId: "price_1SBzVl7ywjQM5ca8WcIHnq8o",
+      size: "S",
+      img: "images/product-lemon.jpg",
+    },
+    "tangerine.png": {
+      name: "Tangerine Stool",
+      price: "$40",
+      priceId: "price_1Sb5fx7ywjQM5ca8Nv9XGe3B",
+      size: "S",
+      img: "images/product-tangerine.jpg",
+    },
+    "raspberry.png": {
+      name: "Raspberry Stool",
+      price: "$60",
+      priceId: "price_1SCqGf7ywjQM5ca8AIfELs3X",
+      size: "S",
+      img: "images/product-raspberry.jpg",
+    },
+    "succulent.png": {
+      name: "Potted Plant Stool",
+      price: "$60",
+      priceId: "price_1SCqKo7ywjQM5ca81X8E5bqk",
+      size: "S",
+      img: "images/product-succulent.jpg",
+    },
+    "Sun.png": {
+      name: "Sun Stool",
+      price: "$60",
+      priceId: "price_1Sb5oP7ywjQM5ca8xu6CPfgD",
+      size: "S",
+      img: "images/product-sun.jpg",
+    },
+    "cactus.png": {
+      name: "Saguaro Stool",
+      price: "$60",
+      priceId: "price_1SCqM47ywjQM5ca8xZLXixjO",
+      size: "S",
+      img: "images/product-saguaro.jpg",
+    },
+  };
+
+  // -----------------------------
+  // Base photo transform state (USER_UPLOAD only)
+  // -----------------------------
   let baseTx = 0;
   let baseTy = 0;
   let baseScale = 1;
 
   function applyBaseTransform() {
+    // Only visually transform when user upload is active
     if (config.base !== "USER_UPLOAD") {
       baseImage.style.transform = "";
       return;
@@ -61,128 +113,25 @@ document.addEventListener("DOMContentLoaded", () => {
     applyBaseTransform();
   }
 
-  function showUploadTools(show) {
-    if (uploadTools) uploadTools.style.display = show ? "block" : "none";
-    if (uploadHint) uploadHint.style.display = show ? "block" : "none";
-  }
-
-  function getCart() {
-    const raw = localStorage.getItem(CART_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }
-
-  function setCart(cart) {
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    updateCartStatus();
-  }
-
-  function getQuotes() {
-    const raw = localStorage.getItem(QUOTE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }
-
-  function setQuotes(list) {
-    localStorage.setItem(QUOTE_KEY, JSON.stringify(list));
-  }
-
-  function updateCartStatus() {
-    if (!cartStatus) return;
-    const cart = getCart();
-    cartStatus.textContent = `Cart items: ${cart.length}`;
-  }
-
-  function setButtonMode() {
-    // USER_UPLOAD => quote mode
-    if (config.base === "USER_UPLOAD") {
-      addBtn.textContent = "Submit for Quotation";
-      addBtn.dataset.mode = "quote";
-    } else {
-      addBtn.textContent = "Add to Cart";
-      addBtn.dataset.mode = "cart";
-    }
-  }
-
-  // =========================
-  // OPTIONS
-  // =========================
-  const options = {
-    base: [
-      { file: "watermelon.png", label: "Watermelon" },
-      { file: "lemon.png", label: "Lemon" },
-      { file: "tangerine.png", label: "Tangerine" },
-      { file: "raspberry.png", label: "Raspberry" },
-      { file: "succulent.png", label: "Succulent" },
-      { file: "Sun.png", label: "Sun" },
-      { file: "cactus.png", label: "Cactus" }
-    ],
-    eyes: [
-      { file: null, label: "None" },
-      { file: "eyes1.png", label: "Eyes 1" },
-      { file: "eyes2.png", label: "Eyes 2" },
-      { file: "eyes3.png", label: "Eyes 3" },
-      { file: "eyes4.png", label: "Eyes 4" },
-      { file: "eyes5.png", label: "Eyes 5" },
-      { file: "eyes6.png", label: "Eyes 6" }
-    ],
-    mouth: [
-      { file: null, label: "None" },
-      { file: "mouth1.png", label: "Mouth 1" },
-      { file: "mouth2.png", label: "Mouth 2" },
-      { file: "mouth3.png", label: "Mouth 3" },
-      { file: "mouth4.png", label: "Mouth 4" },
-      { file: "mouth5.png", label: "Mouth 5" }
-    ]
-  };
-
-  // =========================
-  // UPLOAD (CUSTOM BASE)
-  // =========================
-  uploadInput?.addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      uploadedBaseDataUrl = reader.result;
-
-      config.base = "USER_UPLOAD";
-      baseImage.src = uploadedBaseDataUrl;
-
-      resetBaseTransform();
-      showUploadTools(true);
-      setButtonMode();
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Tool buttons
-  btnReset?.addEventListener("click", () => {
-    if (config.base !== "USER_UPLOAD") return;
-    resetBaseTransform();
-  });
+  btnReset?.addEventListener("click", resetBaseTransform);
 
   btnZoomIn?.addEventListener("click", () => {
-    if (config.base !== "USER_UPLOAD") return;
     baseScale = Math.min(5, baseScale * 1.15);
     applyBaseTransform();
   });
 
   btnZoomOut?.addEventListener("click", () => {
-    if (config.base !== "USER_UPLOAD") return;
     baseScale = Math.max(0.2, baseScale / 1.15);
     applyBaseTransform();
   });
 
-  // =========================
-  // DRAG + ZOOM (UPLOADED BASE ONLY)
-  // =========================
+  // Drag behavior (pointer events)
   let dragging = false;
   let lastX = 0;
   let lastY = 0;
 
   baseImage.addEventListener("pointerdown", (e) => {
     if (config.base !== "USER_UPLOAD") return;
-
     dragging = true;
     baseImage.classList.add("dragging");
     baseImage.setPointerCapture(e.pointerId);
@@ -205,125 +154,138 @@ document.addEventListener("DOMContentLoaded", () => {
     applyBaseTransform();
   });
 
-  function stopDrag() {
+  baseImage.addEventListener("pointerup", () => {
     dragging = false;
     baseImage.classList.remove("dragging");
-  }
+  });
 
-  baseImage.addEventListener("pointerup", stopDrag);
-  baseImage.addEventListener("pointercancel", stopDrag);
+  baseImage.addEventListener("pointercancel", () => {
+    dragging = false;
+    baseImage.classList.remove("dragging");
+  });
 
+  // Wheel zoom (desktop)
   baseImage.addEventListener(
     "wheel",
     (e) => {
       if (config.base !== "USER_UPLOAD") return;
       e.preventDefault();
-      const zoomFactor = e.deltaY < 0 ? 1.08 : 1 / 1.08;
+
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
       baseScale = Math.max(0.2, Math.min(5, baseScale * zoomFactor));
       applyBaseTransform();
     },
     { passive: false }
   );
 
-  // =========================
-  // CAPTURE MOCKUP (RESPECT BASE TRANSFORM)
-  // =========================
-  function captureMockup() {
-    const canvas = document.createElement("canvas");
-    const preview = document.querySelector(".preview");
-    const rect = preview.getBoundingClientRect();
+  // -----------------------------
+  // Upload handling
+  // -----------------------------
+  function setButtonMode() {
+    if (config.base === "USER_UPLOAD") {
+      addBtn.textContent = "Submit for Quotation";
+      addBtn.classList.add("quote-mode");
+      uploadTools.style.display = "flex";
+      uploadHint.style.display = "block";
+    } else {
+      addBtn.textContent = "Add to Cart";
+      addBtn.classList.remove("quote-mode");
+      uploadTools.style.display = "none";
+      uploadHint.style.display = "none";
+    }
+  }
 
-    canvas.width = Math.max(1, Math.round(rect.width));
-    canvas.height = Math.max(1, Math.round(rect.height));
+  uploadInput?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      uploadedBaseDataUrl = reader.result;
+
+      config.base = "USER_UPLOAD";
+      baseImage.src = uploadedBaseDataUrl;
+
+      // reset transform for new photo
+      resetBaseTransform();
+      applyBaseTransform();
+      setButtonMode();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // -----------------------------
+  // Options
+  // -----------------------------
+  const options = {
+    base: [
+      { file: "watermelon.png", label: "Watermelon" },
+      { file: "lemon.png", label: "Lemon" },
+      { file: "tangerine.png", label: "Tangerine" },
+      { file: "raspberry.png", label: "Raspberry" },
+      { file: "succulent.png", label: "Succulent" },
+      { file: "Sun.png", label: "Sun" },
+      { file: "cactus.png", label: "Cactus" },
+    ],
+    eyes: [
+      { file: null, label: "None" },
+      { file: "eyes1.png", label: "Eyes 1" },
+      { file: "eyes2.png", label: "Eyes 2" },
+      { file: "eyes3.png", label: "Eyes 3" },
+      { file: "eyes4.png", label: "Eyes 4" },
+      { file: "eyes5.png", label: "Eyes 5" },
+      { file: "eyes6.png", label: "Eyes 6" },
+    ],
+    mouth: [
+      { file: null, label: "None" },
+      { file: "mouth1.png", label: "Mouth 1" },
+      { file: "mouth2.png", label: "Mouth 2" },
+      { file: "mouth3.png", label: "Mouth 3" },
+      { file: "mouth4.png", label: "Mouth 4" },
+      { file: "mouth5.png", label: "Mouth 5" },
+    ],
+  };
+
+  // -----------------------------
+  // Capture mockup (includes user transform)
+  // -----------------------------
+  function captureMockup() {
+    const previewStage = document.querySelector(".preview-stage");
+    const rect = previewStage.getBoundingClientRect();
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.floor(rect.width));
+    canvas.height = Math.max(1, Math.floor(rect.height));
 
     const ctx = canvas.getContext("2d");
 
-    function drawBase(img) {
-      if (!img || !img.complete) return;
-
-      const iw = img.naturalWidth || img.width;
-      const ih = img.naturalHeight || img.height;
-      if (!iw || !ih) return;
-
-      const drawW = canvas.width;
-      const drawH = (ih / iw) * drawW;
-      const x0 = 0;
-      const y0 = (canvas.height - drawH) / 2;
-
-      if (config.base === "USER_UPLOAD") {
-        const cx = x0 + drawW / 2;
-        const cy = y0 + drawH / 2;
-
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.translate(baseTx, baseTy);
-        ctx.scale(baseScale, baseScale);
-        ctx.translate(-cx, -cy);
-        ctx.drawImage(img, x0, y0, drawW, drawH);
-        ctx.restore();
-      } else {
-        ctx.drawImage(img, x0, y0, drawW, drawH);
-      }
+    // Base
+    if (config.base === "USER_UPLOAD") {
+      ctx.save();
+      ctx.translate(baseTx, baseTy);
+      ctx.scale(baseScale, baseScale);
+      ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    } else {
+      ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
     }
 
-    function drawOverlay(img) {
-      if (!img || img.style.display === "none" || !img.complete) return;
-
-      const computed = window.getComputedStyle(img);
-      const topPx = parseFloat(computed.top || "0");
-      const widthPx = parseFloat(computed.width || "0");
-
-      const w = widthPx > 0 ? widthPx : canvas.width * 0.2;
-      const h = (img.naturalHeight / img.naturalWidth) * w;
-
-      const x = (canvas.width - w) / 2;
-      const y = topPx;
-
-      ctx.drawImage(img, x, y, w, h);
+    // Eyes
+    if (eyesImage && eyesImage.style.display !== "none") {
+      ctx.drawImage(eyesImage, 0, 0, canvas.width, canvas.height);
     }
 
-    drawBase(baseImage);
-    drawOverlay(eyesImage);
-    drawOverlay(mouthImage);
+    // Mouth
+    if (mouthImage && mouthImage.style.display !== "none") {
+      ctx.drawImage(mouthImage, 0, 0, canvas.width, canvas.height);
+    }
 
     return canvas.toDataURL("image/png");
   }
 
-  // =========================
-  // SKU / TITLE HELPERS
-  // =========================
-  function skuToken(str) {
-    if (!str) return "NONE";
-    return String(str)
-      .replace(/\.[^/.]+$/, "")
-      .replace(/[^a-z0-9]+/gi, "-")
-      .replace(/-+/g, "-")
-      .replace(/(^-|-$)/g, "")
-      .toUpperCase();
-  }
-
-  function buildIdentifiers(cfg) {
-    const baseToken = cfg.base === "USER_UPLOAD" ? "CUSTOM" : skuToken(cfg.base);
-    const eyesToken = skuToken(cfg.eyes);
-    const mouthToken = skuToken(cfg.mouth);
-
-    const sku = `B&B-${baseToken}-${eyesToken}-${mouthToken}`;
-    const humanTitle = [
-      cfg.base === "USER_UPLOAD"
-        ? "Custom Uploaded Base"
-        : cfg.base.replace(/\.[^/.]+$/, "").replace(/-/g, " "),
-      cfg.eyes ? `• Eyes: ${cfg.eyes.replace(/\.[^/.]+$/, "")}` : "",
-      cfg.mouth ? `• Mouth: ${cfg.mouth.replace(/\.[^/.]+$/, "")}` : ""
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    return { sku, humanTitle };
-  }
-
-  // =========================
-  // SELECTOR POPULATION
-  // =========================
+  // -----------------------------
+  // Helpers
+  // -----------------------------
   function populateSelector(type, targetElement) {
     const folder = type === "base" ? "bases" : type;
 
@@ -342,10 +304,13 @@ document.addEventListener("DOMContentLoaded", () => {
         config[type] = opt.file;
 
         if (type === "base") {
-          // switching to stock base cancels upload mode
+          // Switching away from upload -> clear upload state
           uploadedBaseDataUrl = null;
+          baseTx = 0;
+          baseTy = 0;
+          baseScale = 1;
+
           baseImage.src = `images/customizer/${folder}/${opt.file}`;
-          showUploadTools(false);
           applyBaseTransform();
           setButtonMode();
         }
@@ -381,84 +346,114 @@ document.addEventListener("DOMContentLoaded", () => {
   populateSelector("eyes", selectors.eyes);
   populateSelector("mouth", selectors.mouth);
 
-  // =========================
-  // BUTTON ACTIONS
-  // =========================
-  addBtn.addEventListener("click", async () => {
-    const { sku, humanTitle } = buildIdentifiers(config);
-    const mockupImage = captureMockup();
+  // -----------------------------
+  // Real Cart integration
+  // -----------------------------
+  function loadCart() {
+    try {
+      const json = localStorage.getItem(CART_KEY);
+      const parsed = json ? JSON.parse(json) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
 
-    // QUOTE MODE
-    if (addBtn.dataset.mode === "quote") {
-      const email = prompt("Enter your email so we can contact you with a quote:");
-      if (!email) return;
+  function saveCart(cart) {
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    } catch {}
+  }
 
-      const note = prompt("Optional: describe your request (theme, colors, details):") || "";
+  function addMappedBaseToCart() {
+    const baseFile = config.base;
+    const mapped = BASE_PRODUCT_MAP[baseFile];
 
-      const quoteRequest = {
-        createdAt: new Date().toISOString(),
-        email,
-        note,
-        sku,
-        title: humanTitle,
-        base: config.base,
-        eyes: config.eyes,
-        mouth: config.mouth,
-        mockupImage
-      };
-
-      const list = getQuotes();
-      list.push(quoteRequest);
-      setQuotes(list);
-
-      // Download the mockup automatically (so user can email it if needed)
-      const a = document.createElement("a");
-      a.href = mockupImage;
-      a.download = `bb-quote-${sku}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      alert(
-        "Quote request submitted!\n\n" +
-          "We downloaded your mockup image so you can share it if needed.\n" +
-          "Next step: we’ll review feasibility + price and email you back."
-      );
-
+    if (!mapped) {
+      alert("That base isn't mapped to a Shop product yet.");
       return;
     }
 
-    // CART MODE (stock bases)
-    const item = {
-      sku,
-      title: humanTitle,
-      base: config.base,
-      eyes: config.eyes,
-      mouth: config.mouth,
-      qty: config.qty,
-      unit_price_cents: 3500,
-      mockupImage,
-      isCustomUpload: false
+    const cart = loadCart();
+
+    const existingIndex = cart.findIndex(
+      (i) => i.priceId === mapped.priceId && i.size === mapped.size
+    );
+
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += 1;
+    } else {
+      cart.push({
+        name: mapped.name,
+        price: mapped.price,
+        priceId: mapped.priceId,
+        size: mapped.size,
+        img: mapped.img,
+        quantity: 1,
+      });
+    }
+
+    saveCart(cart);
+
+    // Tell cart-logic to re-render if it exposed an API
+    if (window.bbCart?.refresh) window.bbCart.refresh();
+
+    // Open the sidebar cart
+    if (window.bbCart?.open) window.bbCart.open();
+    else document.getElementById("open-cart")?.click();
+  }
+
+  function submitForQuote() {
+    const mockup = captureMockup();
+
+    // Download mockup for the user to attach to email (mailto cannot attach automatically)
+    const a = document.createElement("a");
+    a.href = mockup;
+    a.download = "brambles-customizer-mockup.png";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    const details = {
+      base: "USER_UPLOAD",
+      eyes: config.eyes || "None",
+      mouth: config.mouth || "None",
+      note:
+        "Customer uploaded a custom stool photo. This is a quote request, not a paid order.",
     };
 
-    const cart = getCart();
-    cart.push(item);
-    setCart(cart);
+    // Store a lightweight record (no giant data URLs in localStorage)
+    try {
+      const KEY = "bb_quote_requests";
+      const existing = JSON.parse(localStorage.getItem(KEY) || "[]");
+      existing.push({
+        createdAt: new Date().toISOString(),
+        ...details,
+      });
+      localStorage.setItem(KEY, JSON.stringify(existing));
+    } catch {}
 
-    alert(`Added to cart:\n${humanTitle}`);
+    // Open an email draft
+    const subject = encodeURIComponent("Brambles & Berries — Custom Stool Quote Request");
+    const body = encodeURIComponent(
+      `Hi Brambles & Berries,\n\nI’d like a quote for a custom stool design.\n\nDetails:\n- Eyes: ${details.eyes}\n- Mouth: ${details.mouth}\n\nI just downloaded a mockup image from the Customizer.\nPlease reply with pricing + approval steps.\n\nThanks!`
+    );
+
+    window.location.href = `mailto:Bramblesandberries37@gmail.com?subject=${subject}&body=${body}`;
+
+    alert(
+      "Quote request started.\n\n1) A mockup image was downloaded.\n2) An email draft will open.\n3) Attach the mockup and send it.\n\nWe’ll reply with a quote."
+    );
+  }
+
+  addBtn.addEventListener("click", () => {
+    if (config.base === "USER_UPLOAD") {
+      submitForQuote();
+    } else {
+      addMappedBaseToCart();
+    }
   });
 
-  clearCartBtn?.addEventListener("click", () => {
-    if (!confirm("Clear your customizer cart items?")) return;
-    setCart([]);
-  });
-
-  // =========================
-  // INIT UI
-  // =========================
-  showUploadTools(false);
-  updateCartStatus();
+  // Initialize button UI
   setButtonMode();
-
-  window._bb_customizer = { config };
 });
