@@ -3,125 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brambles & Berries Customizer</title>
+  <title>Brambles & Berries - Customizer</title>
+
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
-  <header class="main-header">
-    <div class="container">
-      <a href="index.html" class="logo-link">
-        <img class="logo-image" src="images/logo.png" alt="Brambles & Berries Logo">
-      </a>
+<header class="main-header">
+  <div class="container">
+    <a href="index.html" class="logo-link">
+      <img src="images/logo.png" alt="Brambles and Berries Logo" class="logo-image" />
+    </a>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="customizer.html" class="active">Customizer</a></li>
 
-      <nav class="main-nav">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="customizer.html" class="active">Customizer</a></li>
+        <li class="cart-nav-item">
+          <button id="open-cart" class="cart-button">
+            Cart <span id="cart-count-pill" class="cart-count">0</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
-          <!-- ✅ Real cart button (same IDs as shop.html + cart-logic.js) -->
-          <li class="cart-nav-item">
-            <button id="open-cart" class="cart-button">
-              Cart <span id="cart-count-pill" class="cart-count">0</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <div id="customizer" class="container">
+<main>
+  <section id="customizer">
+    <div class="customizer-grid">
 
       <!-- LEFT: Preview -->
       <div class="preview">
-        <div class="preview-stage">
-          <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base">
-          <img id="eyes-image" src="" alt="Eyes" style="display:none">
-          <img id="mouth-image" src="" alt="Mouth" style="display:none">
+        <img id="base-image" src="images/customizer/bases/watermelon.png" alt="Base preview" />
+        <img id="eyes-image" src="" alt="Eyes overlay" style="display:none;" />
+        <img id="mouth-image" src="" alt="Mouth overlay" style="display:none;" />
+        <button id="add-to-cart">Add to Cart</button>
+      </div>
+
+      <!-- CENTER: Selectors -->
+      <div class="selectors-card">
+        <div class="customizer-section">
+          <h3>Base</h3>
+          <div id="base-selector" class="selector-grid"></div>
         </div>
 
-        <button id="add-to-cart" class="btn addcart-primary">Add to Cart</button>
-      </div>
-
-      <!-- RIGHT: Selectors + Upload panel -->
-      <div class="right-panel">
-        <div class="selectors">
-          <div class="customizer-section">
-            <h3>Base</h3>
-            <div id="base-selector" class="selector-grid"></div>
-          </div>
-
-          <div class="customizer-section">
-            <h3>Eyes</h3>
-            <div id="eyes-selector" class="selector-grid"></div>
-          </div>
-
-          <div class="customizer-section">
-            <h3>Mouth</h3>
-            <div id="mouth-selector" class="selector-grid"></div>
-          </div>
+        <div class="customizer-section">
+          <h3>Eyes</h3>
+          <div id="eyes-selector" class="selector-grid"></div>
         </div>
 
-        <!-- Upload panel (moves based on CSS for mobile/desktop) -->
-        <aside class="upload-panel">
-          <h3 class="upload-title">Upload Your Stool (Optional)</h3>
-
-          <div id="upload-tools" class="upload-tools" style="display:none;">
-            <button id="base-reset" class="upload-tool-btn reset-btn" type="button">Reset Photo</button>
-
-            <div class="zoom-group">
-              <button id="base-zoom-out" class="upload-tool-btn zoom-btn" type="button">−</button>
-              <button id="base-zoom-in" class="upload-tool-btn zoom-btn" type="button">+</button>
-            </div>
-          </div>
-
-          <p id="upload-hint" class="upload-hint" style="display:none;">
-            Tip: drag the photo to position it. Pinch (or scroll) to zoom.
-          </p>
-
-          <input
-            id="upload-base"
-            type="file"
-            accept="image/*"
-          />
-
-          <p class="upload-disclaimer">
-            This photo is for reference only. Final product may vary.
-          </p>
-        </aside>
+        <div class="customizer-section">
+          <h3>Mouth</h3>
+          <div id="mouth-selector" class="selector-grid"></div>
+        </div>
       </div>
-    </div>
-  </main>
 
-  <footer class="main-footer">
-    <div class="container">
-      <p>&copy; 2025 Brambles & Berries. All Rights Reserved.</p>
-      <p>Contact us at <a href="mailto:Bramblesandberries37@gmail.com">Bramblesandberries37@gmail.com</a></p>
-    </div>
-  </footer>
+      <!-- RIGHT: Upload tools -->
+      <div class="upload-card">
+        <h3>Upload Your Stool (Optional)</h3>
 
-  <!-- ✅ Real cart overlay + sidebar (same as shop.html) -->
-  <div id="cart-overlay"></div>
+        <div id="upload-tools">
+          <button id="base-reset" class="upload-tool-btn">Reset Photo</button>
+          <button id="base-zoom-out" class="upload-tool-btn">−</button>
+          <button id="base-zoom-in" class="upload-tool-btn">+</button>
+        </div>
 
-  <div id="cart-sidebar">
-    <header>
-      <h2>Your Cart</h2>
-      <button id="close-cart" aria-label="Close cart">&times;</button>
-    </header>
+        <p id="upload-hint">Tip: drag the photo to position it. Pinch (or scroll) to zoom.</p>
 
-    <div id="cart-items"></div>
+        <input type="file" id="upload-base" accept="image/*" />
 
-    <div class="cart-summary">
-      <div class="cart-summary-row">
-        <span>Subtotal</span>
-        <span id="cart-subtotal">$0.00</span>
+        <p style="text-align:center; margin-top: 10px;">
+          This photo is for reference only. Final product may vary.
+        </p>
       </div>
-      <button id="checkout-button" class="btn checkout-btn">Proceed to Checkout</button>
+
     </div>
+  </section>
+</main>
+
+<footer class="main-footer">
+  <div class="container">
+    <p>&copy; 2025 Brambles & Berries. All Rights Reserved.</p>
+    <p>Contact us at <a href="mailto:Bramblesandberries37@gmail.com">Bramblesandberries37@gmail.com</a></p>
   </div>
+</footer>
 
-  <script src="cart-logic.js"></script>
-  <script src="customizer.js"></script>
+<!-- Cart overlay + sidebar (same IDs as shop) -->
+<div id="cart-overlay"></div>
+
+<div id="cart-sidebar">
+  <header>
+    <h2>Your Cart</h2>
+    <button id="close-cart">&times;</button>
+  </header>
+
+  <div id="cart-items"></div>
+
+  <div class="cart-summary">
+    <div class="cart-summary-row">
+      <span>Subtotal</span>
+      <span id="cart-subtotal">$0.00</span>
+    </div>
+    <button id="checkout-button" class="btn checkout-btn">
+      Proceed to Checkout
+    </button>
+  </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script src="cart-logic.js"></script>
+<script src="customizer.js"></script>
 </body>
 </html>
