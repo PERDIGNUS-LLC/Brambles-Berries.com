@@ -70,6 +70,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     list-style: none;
     display: flex;
     gap: 25px;
+    align-items: center;
 }
 
 .main-nav a {
@@ -143,6 +144,8 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     font-weight: 700;
     margin-top: 20px;
     transition: background-color 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
 .btn:hover {
@@ -272,37 +275,179 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     margin-bottom: 25px;
 }
 
-/* --- Customizer Styles --- */
+/* =========================================================
+   CART UI (shared across Shop + Customizer)
+   ========================================================= */
+.cart-button {
+    position: relative;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #4b4453;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
 
-/* Default stacked layout for mobile */
+.cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 12px;
+    padding: 0 6px;
+    margin-left: 6px;
+}
+
+#cart-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 998;
+}
+
+#cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 360px;
+    max-width: 90vw;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.2);
+    transition: right .25s ease;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+}
+
+#cart-sidebar header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+#cart-sidebar header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+#close-cart {
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+#cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item img {
+    width: 74px;
+    height: 74px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.cart-item-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.cart-item-meta {
+    font-size: 0.92rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.cart-item-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cart-item-actions button {
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.cart-summary {
+    border-top: 1px solid #eee;
+    padding: 16px;
+}
+
+.cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.checkout-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   CUSTOMIZER (layout + upload tools)
+   ========================================================= */
 #customizer {
-    max-width: 700px;
+    max-width: 1200px;
     margin: 40px auto;
     text-align: center;
+    padding: 0 20px;
+}
+
+#customizer .customizer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
 }
 
 #customizer .preview {
     position: relative;
-    max-width: 500px; /* Give a max-width for mobile */
-    margin: 0 auto 20px;
-
-    /* ⭐ NEW: acts as a clipping window when user drags/zooms uploaded photo */
+    max-width: 520px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.35);
+    border-radius: 14px;
+    padding: 14px;
     overflow: hidden;
 }
 
-/* Base image */
 #customizer #base-image {
     width: 100%;
     height: auto;
     display: block;
     position: relative;
     z-index: 1;
-
-    /* ⭐ NEW: enable smooth drag/zoom transforms via JS */
-    transform-origin: center center;
-    touch-action: none; /* allow pointer-based dragging on mobile */
+    touch-action: none; /* needed for pinch/drag */
     user-select: none;
     -webkit-user-drag: none;
+    transform-origin: center center;
     cursor: grab;
 }
 
@@ -310,13 +455,14 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     cursor: grabbing;
 }
 
-/* Eyes & mouth overlays */
-#customizer #eyes-image, #customizer #mouth-image {
+#customizer #eyes-image,
+#customizer #mouth-image {
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
     height: auto;
     z-index: 2;
+    pointer-events: none; /* prevent blocking drag */
 }
 
 #customizer #eyes-image {
@@ -330,13 +476,19 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     z-index: 3;
 }
 
+#customizer .right-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    text-align: left;
+}
+
 .customizer-section {
-    margin-bottom: 20px;
+    margin-bottom: 6px;
 }
 
 .selector-grid {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
@@ -349,18 +501,72 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     border: 2px solid transparent;
     cursor: pointer;
     transition: border-color 0.2s;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.55);
 }
 
 .selector-grid img.selected {
     border-color: var(--primary-red);
 }
 
+.upload-card {
+    background: rgba(255,255,255,0.45);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.upload-card h3 {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+#upload-tools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px; /* Reset further away from +/- */
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.upload-tool-btn {
+    border: 1px solid #d6d6d6;
+    background: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+#base-reset {
+    padding: 10px 14px;
+}
+
+#base-zoom-out,
+#base-zoom-in {
+    width: 52px;   /* bigger +/- */
+    height: 44px;  /* bigger +/- */
+    font-size: 22px;
+    line-height: 1;
+}
+
+#upload-hint {
+    text-align: center;
+    margin: 0 0 10px 0;
+    color: #444;
+}
+
+.upload-card input[type="file"] {
+    width: 100%;
+}
+
+/* Submit button */
 #add-to-cart {
     display: inline-block;
-    margin-top: 25px;
-    padding: 4px 16px;
-    font-size: 1.1rem;
-    background-color: #af7de0ff; /* Fuchsia color */
+    margin-top: 18px;
+    padding: 10px 20px;
+    font-size: 1.05rem;
+    background-color: #af7de0ff;
     color: white;
     border: none;
     border-radius: 50px;
@@ -373,327 +579,642 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     transform: translateY(-2px);
 }
 
-/* --- FIXED TWO-COLUMN DESKTOP LAYOUT --- */
+/* Desktop layout: preview left, selectors center, upload right */
 @media (min-width: 901px) {
-    #customizer {
-        max-width: 1200px;
-        display: flex;
-        align-items: flex-start;
-        gap: 25px;
+    #customizer .customizer-grid {
+        grid-template-columns: 1.05fr 0.95fr 0.85fr;
+        align-items: start;
     }
 
-    /* LEFT Column: Preview Image + Button */
     #customizer .preview {
-        flex: 1 1 60%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Contain the base image without overflow */
-    #customizer .preview #base-image {
+        margin: 0;
         max-width: 100%;
-        max-height: 70vh; /* keeps it inside viewport height */
-        object-fit: contain;
     }
 
-    /* Eyes & mouth stay properly positioned on top */
-    #customizer #eyes-image,
-    #customizer #mouth-image {
-        max-width: 30%; /* will shrink with base image */
-        height: auto;
+    #customizer .selectors-card {
+        max-height: 78vh;
+        overflow-y: auto;
+        padding-right: 6px;
     }
 
-    /* Add-to-Cart button stays under the image */
-    #add-to-cart {
-        margin-top: 20px;
-        align-self: center;
-    }
-
-    /* RIGHT Column: Selectors */
-    #customizer .selectors {
-        flex: 1 1 40%;
-        max-width: 400px;
-        text-align: left;
-        overflow-y: auto; /* ensures scrolling if too tall */
-        max-height: 80vh;
-    }
-
-    /* Align thumbnails to the left */
     .selector-grid {
         justify-content: flex-start;
     }
-
 }
-/* --- Customizer UX Fixes --- */
 
-/* Keep preview as clipping window for drag/zoom */
+/* Mobile: preview, selectors, upload LAST */
+@media (max-width: 900px) {
+    #customizer .preview {
+        max-width: 520px;
+    }
+}
+/* --- Google Fonts Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap');
+
+/* --- CSS Variables (Color Palette) --- */
+:root {
+    --bg-color: #fefdefdb;
+    --text-color: #333333;
+    --primary-red: #B93751;
+    --primary-green: #5C6D47;
+    --heading-font: 'Playfair Display', serif;
+    --body-font: 'Lato', sans-serif;
+}
+
+/* --- General Styles & Reset --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--body-font);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- Typography --- */
+h1, h2, h3 {
+    font-family: var(--heading-font);
+    color: var(--primary-green);
+    margin-top: 0;
+}
+
+h1 { font-size: 3rem; margin-bottom: 0.5em; }
+h2 { font-size: 2.2rem; text-align: center; margin-bottom: 0.5em; }
+h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
+
+/* --- Header & Navigation --- */
+.main-header {
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 10px 0;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-image {
+    height: 120px;
+    width: auto;
+}
+
+.main-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--primary-green);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    border-color: var(--primary-red);
+}
+
+/* --- Hero Section --- */
+.hero {
+    background-image: url('https://perdignus-llc.github.io/Brambles-Berries.com/images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 70vh;
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 700px;
+    margin: 0 20px;
+    background-color: rgba(254, 253, 239, 0.85);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.hero-raspberry {
+    position: absolute;
+    height: 350px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.85;
+    z-index: 0;
+}
+
+.hero-raspberry.left {
+    left: -60px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-15deg);
+}
+
+.hero-raspberry.right {
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%) rotate(15deg) scaleX(-1);
+}
+
+/* --- Reusable Button --- */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-red);
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #a02d45;
+    transform: translateY(-2px);
+}
+
+/* --- Intro & CTA Sections --- */
+.intro, .cta {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.intro p, .cta p {
+    max-width: 650px;
+    margin: 0 auto 1em;
+}
+
+.cta {
+    background-color: #fdfdfd;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- Featured Products Section --- */
+.featured-products {
+    padding: 30px 0;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-card h3 {
+    padding: 20px 20px 25px;
+    margin: 0;
+}
+
+/* --- Footer --- */
+.main-footer {
+    background-color: var(--primary-green);
+    color: var(--bg-color);
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 30px;
+}
+
+.main-footer p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.main-footer a {
+    color: var(--bg-color);
+    text-decoration: underline;
+}
+
+.footer-vine {
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+/* --- Media Query for Mobile Responsiveness --- */
+@media (max-width: 900px) {
+    .main-header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: 3rem 1rem;
+    }
+
+    .hero-content {
+        flex-shrink: 1;
+        margin: 0;
+        padding: 1.5rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-raspberry {
+        display: none;
+    }
+}
+
+/* --- Shop Page Styles --- */
+.shop-page {
+    padding: 40px 0 60px 0;
+}
+
+.product-card .price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-red);
+    margin: -15px 0 15px 0;
+}
+
+.product-card .btn {
+    font-size: 0.9rem;
+    padding: 10px 25px;
+    margin-bottom: 25px;
+}
+
+/* =========================================================
+   CART UI (shared across Shop + Customizer)
+   ========================================================= */
+.cart-button {
+    position: relative;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #4b4453;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 12px;
+    padding: 0 6px;
+    margin-left: 6px;
+}
+
+#cart-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 998;
+}
+
+#cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 360px;
+    max-width: 90vw;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.2);
+    transition: right .25s ease;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+}
+
+#cart-sidebar header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+#cart-sidebar header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+#close-cart {
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+#cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item img {
+    width: 74px;
+    height: 74px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.cart-item-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.cart-item-meta {
+    font-size: 0.92rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.cart-item-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cart-item-actions button {
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.cart-summary {
+    border-top: 1px solid #eee;
+    padding: 16px;
+}
+
+.cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.checkout-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   CUSTOMIZER (layout + upload tools)
+   ========================================================= */
+#customizer {
+    max-width: 1200px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+#customizer .customizer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+}
+
 #customizer .preview {
-  overflow: hidden;
+    position: relative;
+    max-width: 520px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.35);
+    border-radius: 14px;
+    padding: 14px;
+    overflow: hidden;
 }
 
-/* Make uploaded image draggable/zoomable */
 #customizer #base-image {
-  transform-origin: center center;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  cursor: grab;
+    width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 1;
+    touch-action: none; /* needed for pinch/drag */
+    user-select: none;
+    -webkit-user-drag: none;
+    transform-origin: center center;
+    cursor: grab;
 }
 
 #customizer #base-image.dragging {
-  cursor: grabbing;
+    cursor: grabbing;
 }
 
-/* Upload panel styling */
-.upload-panel {
-  background: transparent;
-  padding: 0;
+#customizer #eyes-image,
+#customizer #mouth-image {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: auto;
+    z-index: 2;
+    pointer-events: none; /* prevent blocking drag */
 }
 
-.upload-panel h3 {
-  text-align: center;
+#customizer #eyes-image {
+    width: 20%;
+    top: 30%;
 }
 
-.upload-panel input[type="file"] {
-  margin: 10px auto 15px;
-  display: block;
+#customizer #mouth-image {
+    width: 10%;
+    top: 35%;
+    z-index: 3;
 }
 
-/* Reset button + zoom row spacing */
-.upload-tools {
-  margin-top: 10px;
+#customizer .right-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    text-align: left;
+}
+
+.customizer-section {
+    margin-bottom: 6px;
+}
+
+.selector-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.selector-grid img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.55);
+}
+
+.selector-grid img.selected {
+    border-color: var(--primary-red);
+}
+
+.upload-card {
+    background: rgba(255,255,255,0.45);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.upload-card h3 {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+#upload-tools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px; /* Reset further away from +/- */
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.upload-tool-btn {
+    border: 1px solid #d6d6d6;
+    background: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
 }
 
 #base-reset {
-  display: block;
-  margin: 0 auto 14px; /* more spacing away from +/- */
-  padding: 10px 14px;
-  font-size: 1rem;
+    padding: 10px 14px;
 }
 
-.zoom-row {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
+#base-zoom-out,
+#base-zoom-in {
+    width: 52px;   /* bigger +/- */
+    height: 44px;  /* bigger +/- */
+    font-size: 22px;
+    line-height: 1;
 }
 
-#base-zoom-in,
-#base-zoom-out {
-  width: 48px;      /* bigger */
-  height: 48px;     /* bigger */
-  font-size: 1.6rem;
-  border-radius: 10px;
-  cursor: pointer;
+#upload-hint {
+    text-align: center;
+    margin: 0 0 10px 0;
+    color: #444;
 }
 
-.hint {
-  text-align: center;
-  margin-top: 12px;
+.upload-card input[type="file"] {
+    width: 100%;
 }
 
-.fineprint {
-  text-align: center;
-  margin-top: 12px;
-  opacity: 0.85;
+/* Submit button */
+#add-to-cart {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 10px 20px;
+    font-size: 1.05rem;
+    background-color: #af7de0ff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
-.cart-status {
-  text-align: center;
-  margin-top: 16px;
-  font-weight: 700;
+#add-to-cart:hover {
+    background-color: #d100d1;
+    transform: translateY(-2px);
 }
 
-.clear-cart {
-  display: block;
-  margin: 10px auto 0;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* =========================
-   LAYOUT FIXES
-   ========================= */
-
-/* MOBILE: preview -> selectors -> upload panel */
-@media (max-width: 900px) {
-  #customizer {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  #customizer .preview { order: 1; }
-  #customizer .selectors { order: 2; }
-  #customizer .upload-panel { order: 3; }
-}
-
-/* DESKTOP: preview | selectors | upload panel (right side) */
+/* Desktop layout: preview left, selectors center, upload right */
 @media (min-width: 901px) {
-  #customizer {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 25px;
-    max-width: 1200px;
-  }
+    #customizer .customizer-grid {
+        grid-template-columns: 1.05fr 0.95fr 0.85fr;
+        align-items: start;
+    }
 
-  #customizer .preview {
-    flex: 1 1 58%;
-  }
+    #customizer .preview {
+        margin: 0;
+        max-width: 100%;
+    }
 
-  #customizer .selectors {
-    flex: 1 1 28%;
-    max-width: 420px;
-  }
+    #customizer .selectors-card {
+        max-height: 78vh;
+        overflow-y: auto;
+        padding-right: 6px;
+    }
 
-  #customizer .upload-panel {
-    flex: 1 1 14%;
-    min-width: 240px;
-  }
-}
-/* ============================
-   Customizer layout upgrades
-   ============================ */
-
-#customizer .preview-stage{
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto 16px;
+    .selector-grid {
+        justify-content: flex-start;
+    }
 }
 
-#customizer .preview-stage #base-image{
-  width: 100%;
-  height: auto;
-  display: block;
-  position: relative;
-  z-index: 1;
-  touch-action: none; /* better dragging on mobile */
-  user-select: none;
-}
-
-#customizer .preview-stage #eyes-image,
-#customizer .preview-stage #mouth-image{
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0);
-  height: auto;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Keep your existing % positions */
-#customizer .preview-stage #eyes-image { width: 20%; top: 30%; }
-#customizer .preview-stage #mouth-image { width: 10%; top: 35%; z-index: 3; }
-
-#customizer .right-panel{
-  display: flex;
-  flex-direction: column; /* mobile: selectors first, upload after */
-  gap: 18px;
-}
-
-/* Upload panel styling */
-.upload-panel{
-  background: rgba(254, 253, 239, 0.85);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: 10px;
-  padding: 14px;
-}
-
-.upload-title{
-  margin: 0 0 10px 0;
-  text-align: center;
-}
-
-.upload-tools{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px; /* ✅ pushes Reset away from +/- group */
-  margin-bottom: 8px;
-}
-
-.zoom-group{
-  display: inline-flex;
-  gap: 10px;
-}
-
-.upload-tool-btn{
-  border: 1px solid rgba(0,0,0,0.15);
-  background: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.reset-btn{
-  padding: 10px 14px;
-  font-weight: 700;
-}
-
-.zoom-btn{
-  width: 44px;          /* ✅ bigger buttons */
-  height: 44px;         /* ✅ bigger buttons */
-  font-size: 22px;      /* ✅ bigger symbols */
-  font-weight: 800;
-  line-height: 1;
-}
-
-.upload-hint{
-  text-align: center;
-  margin: 8px 0 10px;
-  font-size: 0.95rem;
-}
-
-.upload-disclaimer{
-  text-align: center;
-  margin: 10px 0 0;
-  font-size: 0.9rem;
-  opacity: 0.85;
-}
-
-/* Button modes */
-#add-to-cart.addcart-primary{
-  background-color: #af7de0ff;
-  border-radius: 50px;
-}
-
-#add-to-cart.quote-mode{
-  background-color: #B93751; /* primary red */
-  border-radius: 50px;
-}
-
-/* Desktop: preview left, selectors middle, upload right */
-@media (min-width: 901px){
-  #customizer{
-    display: flex;
-    gap: 25px;
-    align-items: flex-start;
-  }
-
-  #customizer .preview{
-    flex: 1 1 55%;
-  }
-
-  #customizer .right-panel{
-    flex: 1 1 45%;
-    flex-direction: row;   /* ✅ selectors left, upload right */
-    gap: 18px;
-    max-height: 80vh;
-    overflow: hidden;
-  }
-
-  #customizer .selectors{
-    flex: 1 1 auto;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding-right: 8px;
-  }
-
-  .upload-panel{
-    flex: 0 0 320px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
+/* Mobile: preview, selectors, upload LAST */
+@media (max-width: 900px) {
+    #customizer .preview {
+        max-width: 520px;
+    }
 }
