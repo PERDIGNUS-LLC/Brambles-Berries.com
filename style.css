@@ -285,16 +285,32 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     position: relative;
     max-width: 500px; /* Give a max-width for mobile */
     margin: 0 auto 20px;
+
+    /* ⭐ NEW: acts as a clipping window when user drags/zooms uploaded photo */
+    overflow: hidden;
 }
 
+/* Base image */
 #customizer #base-image {
     width: 100%;
     height: auto;
     display: block;
     position: relative;
     z-index: 1;
+
+    /* ⭐ NEW: enable smooth drag/zoom transforms via JS */
+    transform-origin: center center;
+    touch-action: none; /* allow pointer-based dragging on mobile */
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: grab;
 }
 
+#customizer #base-image.dragging {
+    cursor: grabbing;
+}
+
+/* Eyes & mouth overlays */
 #customizer #eyes-image, #customizer #mouth-image {
     position: absolute;
     left: 50%;
@@ -382,7 +398,7 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     }
 
     /* Eyes & mouth stay properly positioned on top */
-    #customizer #eyes-image, 
+    #customizer #eyes-image,
     #customizer #mouth-image {
         max-width: 30%; /* will shrink with base image */
         height: auto;
@@ -407,4 +423,5 @@ h3 { font-size: 1.4rem; color: var(--primary-green); margin-bottom: 0.5em;}
     .selector-grid {
         justify-content: flex-start;
     }
+
 }
