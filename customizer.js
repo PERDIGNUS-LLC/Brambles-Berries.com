@@ -252,7 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "eyes5.png", label: "Eyes 5" },
       { file: "eyes6.png", label: "Eyes 6" },
       { file: "eyes7.png", label: "Eyes 7" },
-      { file: "eyes8.png", label: "Eyes 8" }
+      { file: "eyes8.png", label: "Eyes 8" },
+      { file: "eyes12.png", label: "Eyes 9" }
     ],
     mouth: [
       { file: null, label: "None" },
@@ -264,9 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "mouth6.png", label: "Mouth 6" },
       { file: "mouth7.png", label: "Mouth 7" },
       { file: "mouth8.png", label: "Mouth 8" },
-      { file: "mouth9.png", label: "Mouth 9" },
-      { file: "mouth12.png", label: "Mouth 12" }
-    ]
+      { file: "mouth9.png", label: "Mouth 9" }
+         ]
   };
 
   function populateSelector(type, targetElement) {
