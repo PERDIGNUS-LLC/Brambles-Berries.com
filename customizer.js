@@ -264,7 +264,8 @@ document.addEventListener("DOMContentLoaded", () => {
       { file: "mouth6.png", label: "Mouth 6" },
       { file: "mouth7.png", label: "Mouth 7" },
       { file: "mouth8.png", label: "Mouth 8" },
-      { file: "mouth9.png", label: "Mouth 9" }
+      { file: "mouth9.png", label: "Mouth 9" },
+      { file: "mouth12.png", label: "Mouth 12" }
     ]
   };
 
